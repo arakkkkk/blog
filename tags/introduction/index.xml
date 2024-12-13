@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Introduction on arakkk</title><link>https://demo.stack.jimmycai.com/tags/introduction/</link><description>Recent content in Introduction on arakkk</description><generator>Hugo -- gohugo.io</generator><language>ja-JP</language><lastBuildDate>Thu, 12 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://demo.stack.jimmycai.com/tags/introduction/index.xml" rel="self" type="application/rss+xml"/><item><title>【KVMの仮想化入門③】cockpitでブラウザからVMを構築してみる</title><link>https://demo.stack.jimmycai.com/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</link><pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate><guid>https://demo.stack.jimmycai.com/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</guid><description>&lt;h2 id="blockquotes">Blockquotes
+&lt;/h2>&lt;p>The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a &lt;code>footer&lt;/code> or &lt;code>cite&lt;/code> element, and optionally with in-line changes such as annotations and abbreviations.&lt;/p>
+&lt;h3 id="blockquote-without-attribution">Blockquote without attribution
+&lt;/h3>&lt;blockquote>
+&lt;p>Tiam, ad mint andaepu dandae nostion secatur sequo quae.
+&lt;strong>Note&lt;/strong> that you can use &lt;em>Markdown syntax&lt;/em> within a blockquote.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="blockquote-with-attribution">Blockquote with attribution
+&lt;/h3>&lt;blockquote>
+&lt;p>Don&amp;rsquo;t communicate by sharing memory, share memory by communicating.&lt;br>
+— &lt;cite>Rob Pike&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/cite>&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="tables">Tables
+&lt;/h2>&lt;p>Tables aren&amp;rsquo;t part of the core Markdown spec, but Hugo supports supports them out-of-the-box.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Age&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Bob&lt;/td>
+&lt;td>27&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Alice&lt;/td>
+&lt;td>23&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="inline-markdown-within-tables">Inline Markdown within tables
+&lt;/h3>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Italics&lt;/th>
+&lt;th>Bold&lt;/th>
+&lt;th>Code&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;em>italics&lt;/em>&lt;/td>
+&lt;td>&lt;strong>bold&lt;/strong>&lt;/td>
+&lt;td>&lt;code>code&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>A&lt;/th>
+&lt;th>B&lt;/th>
+&lt;th>C&lt;/th>
+&lt;th>D&lt;/th>
+&lt;th>E&lt;/th>
+&lt;th>F&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.&lt;/td>
+&lt;td>Phasellus ultricies, sapien non euismod aliquam, dui ligula tincidunt odio, at accumsan nulla sapien eget ex.&lt;/td>
+&lt;td>Proin eleifend dictum ipsum, non euismod ipsum pulvinar et. Vivamus sollicitudin, quam in pulvinar aliquam, metus elit pretium purus&lt;/td>
+&lt;td>Proin sit amet velit nec enim imperdiet vehicula.&lt;/td>
+&lt;td>Ut bibendum vestibulum quam, eu egestas turpis gravida nec&lt;/td>
+&lt;td>Sed scelerisque nec turpis vel viverra. Vivamus vitae pretium sapien&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="code-blocks">Code Blocks
+&lt;/h2>&lt;h3 id="code-block-with-backticks">Code block with backticks
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">&amp;lt;!doctype html&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">html&lt;/span> &lt;span class="na">lang&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;en&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">head&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">meta&lt;/span> &lt;span class="na">charset&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;utf-8&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">title&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>Example HTML5 Document&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">title&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">head&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">body&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>Test&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">body&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">html&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="code-block-indented-with-four-spaces">Code block indented with four spaces
+&lt;/h3>&lt;pre>&lt;code>&amp;lt;!doctype html&amp;gt;
+&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;
+&amp;lt;head&amp;gt;
+&amp;lt;meta charset=&amp;quot;utf-8&amp;quot;&amp;gt;
+&amp;lt;title&amp;gt;Example HTML5 Document&amp;lt;/title&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&amp;lt;p&amp;gt;Test&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;h3 id="diff-code-block">Diff code block
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-diff" data-lang="diff">&lt;span class="line">&lt;span class="cl">[dependencies.bevy]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git = &amp;#34;https://github.com/bevyengine/bevy&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">rev = &amp;#34;11f52b8c72fc3a568e8bb4a4cd1f3eb025ac2e13&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="gd">- features = [&amp;#34;dynamic&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="gd">&lt;/span>&lt;span class="gi">+ features = [&amp;#34;jpeg&amp;#34;, &amp;#34;dynamic&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="one-line-code-block">One line code block
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>A paragraph&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="list-types">List Types
+&lt;/h2>&lt;h3 id="ordered-list">Ordered List
+&lt;/h3>&lt;ol>
+&lt;li>First item&lt;/li>
+&lt;li>Second item&lt;/li>
+&lt;li>Third item&lt;/li>
+&lt;/ol>
+&lt;h3 id="unordered-list">Unordered List
+&lt;/h3>&lt;ul>
+&lt;li>List item&lt;/li>
+&lt;li>Another item&lt;/li>
+&lt;li>And another item&lt;/li>
+&lt;/ul>
+&lt;h3 id="nested-list">Nested list
+&lt;/h3>&lt;ul>
+&lt;li>Fruit
+&lt;ul>
+&lt;li>Apple&lt;/li>
+&lt;li>Orange&lt;/li>
+&lt;li>Banana&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Dairy
+&lt;ul>
+&lt;li>Milk&lt;/li>
+&lt;li>Cheese&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="other-elements--abbr-sub-sup-kbd-mark">Other Elements — abbr, sub, sup, kbd, mark
+&lt;/h2>&lt;p>&lt;abbr title="Graphics Interchange Format">GIF&lt;/abbr> is a bitmap image format.&lt;/p>
+&lt;p>H&lt;sub>2&lt;/sub>O&lt;/p>
+&lt;p>X&lt;sup>n&lt;/sup> + Y&lt;sup>n&lt;/sup> = Z&lt;sup>n&lt;/sup>&lt;/p>
+&lt;p>Press &lt;kbd>CTRL&lt;/kbd> + &lt;kbd>ALT&lt;/kbd> + &lt;kbd>Delete&lt;/kbd> to end the session.&lt;/p>
+&lt;p>Most &lt;mark>salamanders&lt;/mark> are nocturnal, and hunt for insects, worms, and other small creatures.&lt;/p>
+&lt;div class="footnotes" role="doc-endnotes">
+&lt;hr>
+&lt;ol>
+&lt;li id="fn:1">
+&lt;p>The above quote is excerpted from Rob Pike&amp;rsquo;s &lt;a class="link" href="https://www.youtube.com/watch?v=PAAkCSZUG1c" target="_blank" rel="noopener"
+>talk&lt;/a> during Gopherfest, November 18, 2015.&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;/div></description></item><item><title>【KVMの仮想化入門②】virshでVMをデプロイしてみる</title><link>https://demo.stack.jimmycai.com/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80virsh%E3%81%A7vm%E3%82%92%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</link><pubDate>Wed, 11 Dec 2024 00:00:00 +0000</pubDate><guid>https://demo.stack.jimmycai.com/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80virsh%E3%81%A7vm%E3%82%92%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</guid><description>&lt;p>前回はKVMの仮想化基盤を用意するところまでをやっていみました。今回は&lt;code>virsh&lt;/code>を用いてCLIから仮想マシンを構築するところまでをやってみます&lt;/p>
+&lt;h2 id="virshとは">virshとは
+&lt;/h2>&lt;ul>
+&lt;li>KVMやQEMUを利用した仮想化基盤の管理をコマンドラインから行うためのツール&lt;/li>
+&lt;li>Libvirtという仮想化管理ツールをバックエンドに利用&lt;/li>
+&lt;li>仮想マシンの作成、削除、起動、停止、リソースの管理などをシンプルなコマンドで実行可能&lt;/li>
+&lt;/ul>
+&lt;h2 id="virshで利用できる参照コマンド">virshで利用できる参照コマンド
+&lt;/h2>&lt;p>&lt;code>virsh&lt;/code>には仮想化リソースを参照するための多くのコマンドが用意されています。&lt;br>
+まずはよく利用しそうなコマンドを使ってみようと思います&lt;/p>
+&lt;h3 id="仮想マシンの参照コマンド">仮想マシンの参照コマンド
+&lt;/h3>&lt;ul>
+&lt;li>&lt;code>virsh list --all&lt;/code>
+&lt;ul>
+&lt;li>稼働中、停止中を問わずすべてのVMを表示します(今回はまだVMを作成できていないので表示なし)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">ubuntu@kvm001:~$ virsh list --all
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Id Name State
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">--------------------
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>仮にVMが存在した場合、以下のような表示になります&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ virsh list --all
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Id Name State
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">--------------------------------
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 12 ubuntu001 running
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - ubuntu002 shut off
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>&lt;code>virsh dominfo &amp;lt;VM名&amp;gt;&lt;/code>
+&lt;ul>
+&lt;li>指定したVMの詳細情報を表示(別途用意した環境で確認)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ virsh dominfo ubuntu001
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Id: 12
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Name: ubuntu001
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">UUID: bdce429c-1284-463b-8af4-f538374a3b2d
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">OS Type: hvm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">State: running
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">CPU(s): 2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">CPU time: 10368.9s
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Max memory: 3145728 KiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Used memory: 3145728 KiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Persistent: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Autostart: disable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Managed save: no
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Security model: none
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Security DOI: 0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Messages: tainted: running with undesirable elevated privileges
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="仮想ネットワークの参照コマンド">仮想ネットワークの参照コマンド
+&lt;/h3>&lt;ul>
+&lt;li>&lt;code>virsh net-list&lt;/code>
+&lt;ul>
+&lt;li>現在有効な仮想ネットワークの一覧を表示します。&lt;/li>
+&lt;li>&lt;code>default&lt;/code> という名前の仮想ネットワークがすでに作成されていることがわかります&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">ubuntu@kvm001:~$ virsh net-list --all
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Name State Autostart Persistent
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">--------------------------------------------
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> default active yes yes
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>&lt;code>virsh net-dumpxml &amp;lt;ネットワーク名&amp;gt;&lt;/code>
+&lt;ul>
+&lt;li>指定したネットワークのXML設定を表示します。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">ubuntu@kvm001:~$ virsh net-info default
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Name: default
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">UUID: 61c20183-757b-402f-a92e-677072b910d0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Active: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Persistent: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Autostart: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Bridge: virbr0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>この仮想ネットワークについては、今後もう少し詳細を書きたいと思っています&lt;/p>
+&lt;h3 id="仮想ストレージの参照コマンド">仮想ストレージの参照コマンド
+&lt;/h3>&lt;ul>
+&lt;li>&lt;code>virsh pool-list&lt;/code>
+&lt;ul>
+&lt;li>現在利用可能なストレージプールの一覧を表示します。(今回はまだ作成できていないので表示なし)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">ubuntu@kvm001:~$ virsh pool-list --all
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Name State Autostart
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">---------------------------
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>すでに作成されていた場合、以下のような表示になります&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ virsh pool-list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Name State Autostart
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">------------------------------------
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> default active yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ubuntu active yes
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>&lt;code>virsh pool-info &amp;lt;プール名&amp;gt;&lt;/code>
+&lt;ul>
+&lt;li>指定したストレージプールの詳細情報を表示します。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ virsh pool-info default
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Name: default
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">UUID: fa63badf-324b-4fa9-992c-81581e9c307f
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">State: running
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Persistent: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Autostart: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Capacity: 456.35 GiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Allocation: 72.34 GiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Available: 384.00 GiB
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="virsh仮想マシンを構築する">virsh仮想マシンを構築する
+&lt;/h2>&lt;p>前置きが長くなりましたが、いよいよ仮想マシンの構築に入ります。&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>ディスクイメージの準備&lt;/strong>
+仮想マシン用のディスクイメージを作成します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">qemu-img create -f qcow2 /var/lib/libvirt/images/myvm.qcow2 20G
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>上記のコマンドで20GBのQCOW2形式のディスクイメージを作成します。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>仮想マシンのXMLファイルを作成&lt;/strong>
+仮想マシンの構成を定義するXMLファイルを用意します。以下は基本的な構成の例です。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-xml" data-lang="xml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;domain&lt;/span> &lt;span class="na">type=&lt;/span>&lt;span class="s">&amp;#39;kvm&amp;#39;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;name&amp;gt;&lt;/span>myvm&lt;span class="nt">&amp;lt;/name&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;memory&lt;/span> &lt;span class="na">unit=&lt;/span>&lt;span class="s">&amp;#39;KiB&amp;#39;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>2097152&lt;span class="nt">&amp;lt;/memory&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;vcpu&lt;/span> &lt;span class="na">placement=&lt;/span>&lt;span class="s">&amp;#39;static&amp;#39;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>2&lt;span class="nt">&amp;lt;/vcpu&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;os&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;type&lt;/span> &lt;span class="na">arch=&lt;/span>&lt;span class="s">&amp;#39;x86_64&amp;#39;&lt;/span> &lt;span class="na">machine=&lt;/span>&lt;span class="s">&amp;#39;pc&amp;#39;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>hvm&lt;span class="nt">&amp;lt;/type&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;/os&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;devices&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;disk&lt;/span> &lt;span class="na">type=&lt;/span>&lt;span class="s">&amp;#39;file&amp;#39;&lt;/span> &lt;span class="na">device=&lt;/span>&lt;span class="s">&amp;#39;disk&amp;#39;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;source&lt;/span> &lt;span class="na">file=&lt;/span>&lt;span class="s">&amp;#39;/var/lib/libvirt/images/myvm.qcow2&amp;#39;&lt;/span>&lt;span class="nt">/&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;target&lt;/span> &lt;span class="na">dev=&lt;/span>&lt;span class="s">&amp;#39;vda&amp;#39;&lt;/span> &lt;span class="na">bus=&lt;/span>&lt;span class="s">&amp;#39;virtio&amp;#39;&lt;/span>&lt;span class="nt">/&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;/disk&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;interface&lt;/span> &lt;span class="na">type=&lt;/span>&lt;span class="s">&amp;#39;network&amp;#39;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;source&lt;/span> &lt;span class="na">network=&lt;/span>&lt;span class="s">&amp;#39;default&amp;#39;&lt;/span>&lt;span class="nt">/&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;/interface&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;/devices&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;/domain&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>仮想マシンの定義を読み込む&lt;/strong>
+用意したXMLファイルを読み込み、仮想マシンを定義します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">virsh define myvm.xml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>仮想マシンを起動&lt;/strong>
+定義した仮想マシンを起動します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">virsh start myvm
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>動作確認&lt;/strong>
+起動後、以下のコマンドで仮想マシンの状態を確認します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">virsh list --all
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ol></description></item><item><title>【KVMの仮想化入門① 】LinuxにKVMをインストールする</title><link>https://demo.stack.jimmycai.com/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80-linux%E3%81%ABkvm%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B/</link><pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate><guid>https://demo.stack.jimmycai.com/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80-linux%E3%81%ABkvm%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B/</guid><description>&lt;p>KVM（Kernel-based Virtual Machine）について、少し勉強した上でLinuxのマシンにKVMの仮想化基盤を構築するところまでをやってみます&lt;/p>
+&lt;h2 id="仮想化の概要">仮想化の概要
+&lt;/h2>&lt;p>KVMについてお話する前に、前提として仮想化と、そのプラットフォームについて書いてみます。&lt;br>
+仮想化とは、1つの物理コンピュータ上で複数の仮想マシン（Virtual Machine, VM）を実行する技術です。仮想化により、物理リソースの効率的な活用、アプリケーションの分離、テスト環境の作成が容易になります。&lt;/p>
+&lt;h2 id="kvmについて">KVMについて
+&lt;/h2>&lt;p>仮想化技術に使用されるハイパーバイザには様々なものがありますが、今回利用するKVMについてざっくりと特徴を上げると以下になります&lt;/p>
+&lt;ul>
+&lt;li>オープンソースとして無料で提供されている&lt;/li>
+&lt;li>Linuxカーネルに統合された仮想化機能&lt;/li>
+&lt;li>qemu, libvirtと組み合わせて利用される&lt;/li>
+&lt;li>virsh, virt-manager, cockpit, OpenStack, oVirtなど様々な管理ツールが存在する&lt;/li>
+&lt;li>AWS, GCP等のメガクラウドでも採用されている技術である&lt;/li>
+&lt;/ul>
+&lt;p>※ qemuについて: &lt;a class="link" href="https://gihyo.jp/dev/serial/01/vm_work/0002" target="_blank" rel="noopener"
+>第2回　Linux KVMで知る仮想マシンの概要 | gihyo.jp&lt;/a>&lt;br>
+※ KVM管理ツールについて: &lt;a class="link" href="https://www.designet.co.jp/faq/term/?id=S1ZN" target="_blank" rel="noopener"
+>KVMとは | OSSのデージーネット&lt;/a>&lt;/p>
+&lt;h2 id="kvmを用いた仮想化環境の構築">KVMを用いた仮想化環境の構築
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 必要なパッケージのインストール&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo apt update
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo apt install -y qemu-kvm libvirt-daemon libvirt-clients bridge-utils
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 再起動&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo reboot
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>以上で、KVMとその関連ツールのインストールは完了です。&lt;/p>
+&lt;h2 id="インストールの確認">インストールの確認
+&lt;/h2>&lt;p>以下のコマンドでインストールが成功しているか確認します。&lt;/p>
+&lt;h3 id="kvmの状態確認">KVMの状態確認
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">ubuntu@kvm001:~$ sudo kvm-ok
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">INFO: /dev/kvm exists
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">KVM acceleration can be used
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="libvirtサービスの状態確認">libvirtサービスの状態確認
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">ubuntu@kvm001:~$ sudo systemctl status libvirtd
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">○ libvirtd.service - libvirt legacy monolithic daemon
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Loaded: loaded &lt;span class="o">(&lt;/span>/usr/lib/systemd/system/libvirtd.service&lt;span class="p">;&lt;/span> enabled&lt;span class="p">;&lt;/span> preset: enabled&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Active: inactive &lt;span class="o">(&lt;/span>dead&lt;span class="o">)&lt;/span> since Fri 2024-12-13 03:18:37 UTC&lt;span class="p">;&lt;/span> 9s ago
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ~~以下省略~~&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>以上で、KVMとその関連ツールのインストールは完了です。&lt;/p>
+&lt;p>次回はこのKVM環境でvirshを使って仮想マシンを構築してみます&lt;/p></description></item></channel></rss>
