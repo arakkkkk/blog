@@ -74,7 +74,7 @@ ubuntu@kvm001:~$ virsh net-list --all
  default   active   yes         yes
 ```
 - `virsh net-dumpxml <ネットワーク名>`
-  - 指定したネットワークのXML設定を表示します。
+  - 指定したネットワークの設定を表示します。
 ```
 ubuntu@kvm001:~$ virsh net-info default
 Name:           default
@@ -125,49 +125,96 @@ Available:      384.00 GiB
 
 前置きが長くなりましたが、いよいよ仮想マシンの構築に入ります。
 
-1. **ディスクイメージの準備**
-   仮想マシン用のディスクイメージを作成します。
-   ```bash
-   qemu-img create -f qcow2 /var/lib/libvirt/images/myvm.qcow2 20G
-   ```
-   上記のコマンドで20GBのQCOW2形式のディスクイメージを作成します。
+### isoの準備
+今回は、ubuntuのVMを作成しようと思うので、wgetでubuntuのisoをダウンロードしておきます
+```bash
+mkdir /iso
+sudo wget -P /iso https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso                 
+```
+### ディスクイメージの準備
+仮想マシン用のディスクイメージを作成します。
+```bash
+sudo qemu-img create -f qcow2 /var/lib/libvirt/images/ubuntu001.qcow2 20G
+```
 
-2. **仮想マシンのXMLファイルを作成**
-   仮想マシンの構成を定義するXMLファイルを用意します。以下は基本的な構成の例です。
-   ```xml
-   <domain type='kvm'>
-       <name>myvm</name>
-       <memory unit='KiB'>2097152</memory>
-       <vcpu placement='static'>2</vcpu>
-       <os>
-           <type arch='x86_64' machine='pc'>hvm</type>
-       </os>
-       <devices>
-           <disk type='file' device='disk'>
-               <source file='/var/lib/libvirt/images/myvm.qcow2'/>
-               <target dev='vda' bus='virtio'/>
-           </disk>
-           <interface type='network'>
-               <source network='default'/>
-           </interface>
-       </devices>
-   </domain>
-   ```
+### 仮想マシンのXMLファイルを作成
+libvirtでは、XMLを用いてVMの構成管理が行われます  
+そのため、以下の仮想マシンの構成を定義するXMLファイルを用意します
+```bash
+vi ubuntu001.xml
+```
+ファイルには以下内容を記載します
+```xml
+<domain type='kvm'>
+  <name>ubuntu001</name>
+  <memory unit='MiB'>4096</memory>
+  <vcpu placement='static'>2</vcpu>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-6.2'>hvm</type>
+    <boot dev='cdrom'/>
+  </os>
+  <devices>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/ubuntu001.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/iso/ubuntu-24.04.1-live-server-amd64.iso'/>
+      <target dev='sda' bus='sata'/>
+    </disk>
+    <interface type='network'>
+      <source network='default'/>
+    </interface>
+    <graphics type='vnc' port='-1' autoport='yes'/>
+  </devices>
+</domain>
+```
 
-3. **仮想マシンの定義を読み込む**
-   用意したXMLファイルを読み込み、仮想マシンを定義します。
-   ```bash
-   virsh define myvm.xml
-   ```
+XMLに記載している内容について、細かい内容は省略しますが下記設定を盛り込んでいます
+- 基本情報
+  - `<name>ubuntu001</name>`: vm名をubuntu001とする
+  - `<memory unit='MiB'>4096</memory>`: 仮想マシンに割り当てるメモリ量を4096MB=2GBとする
+  - `<vcpu placement='static'>2</vcpu>`: 割り当てるvCPUの数を2にする
+- OSの設定 (`<os>`)
+  - `<boot dev='cdrom'/>`: 仮想マシン起動時にCD-ROMを最初のブートデバイスとして使用するように設定
+- ストレージの設定 (`<disk>`)
+  - 仮想ディスク
+    - `<source file='/var/lib/libvirt/images/ubuntu001.qcow2'/>`: 作成した仮想ディスクのパスを指定
+  - ISOイメージ（`<disk>`）
+    - `<disk type='file' device='cdrom'>`: ISOイメージを光学ドライブに割り当てる設定
+    - `<source file='/iso/ubuntu-24.04.1-live-server-amd64.iso'/>`: ダウンロードしたISOイメージをソースに設定
+- ネットワーク設定 (`<interface>`)
+  - `<interface type='network'>`: 仮想マシンのネットワークインターフェイスを設定 (NATを用いた接続)
+  - `<source network='default'/>`: 事前定義された`default`ネットワークを使用
 
-4. **仮想マシンを起動**
-   定義した仮想マシンを起動します。
-   ```bash
-   virsh start myvm
-   ```
+詳細は下記サイトにまとまっています
+ * [7.3. 仮想マシンの XML 設定例 | Red Hat Product Documentation](https://docs.redhat.com/ja/documentation/red_hat_enterprise_linux/8/html/configuring_and_managing_virtualization/sample-virtual-machine-xml-configuration_viewing-information-about-virtual-machines#sample-virtual-machine-xml-configuration_viewing-information-about-virtual-machines)
 
-5. **動作確認**
-   起動後、以下のコマンドで仮想マシンの状態を確認します。
-   ```bash
-   virsh list --all
-   ```
+### 仮想マシンの定義を読み込む
+用意したXMLファイルを読み込み、仮想マシンを定義します。
+```bash
+virsh define ubuntu001.xml
+```
+ちなみに、この時点で仮想マシンが作成された状態となり、`virsh list --all`でその状態が確認できます。
+```
+ubuntu@kvm001:~$ virsh list --all
+ Id   Name        State
+----------------------------
+ -    ubuntu001   shut off
+```
+
+### 仮想マシンを起動
+定義した仮想マシンを起動します。
+```bash
+virsh start ubuntu001
+```
+起動後、以下のコマンドで仮想マシンの状態を確認します。
+
+ ```bash
+ ubuntu@kvm001:~$ virsh list --all
+ Id   Name   State
+----------------------
+ 3    myvm   running
+```
