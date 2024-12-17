@@ -1,7 +1,7 @@
 ---
-title: 【KVMの仮想化入門③】cockpitでブラウザからVMを構築してみる
+title: 【KVMの仮想化入門③】cockpitでブラウザからVMを操作してみる
 date: 2024-12-12
-description: cockpitを使ってブラウザからVMを構築してみる
+description: cockpitを使ってブラウザからVMを操作してみる
 tags: 
     - KVM
     - Introduction
@@ -9,118 +9,64 @@ categories:
     - KVM
 ---
 
-## Blockquotes
+## cockpitとは:
+cockpitとは、下記特徴を持つソフトウェアです。今回は仮想化のために使用しますが、それはあくまでcockpitの機能の一部を利用する形となります
+* Linuxシステムのサーバ管理用webサーバー
+* LinuxシステムのCPU、メモリ、ネットワーク、ストレージなどのシステムリソースの使用状況をリアルタイムで監視できる
+* 仮想マシンの作成、起動、停止、スナップショットの作成等簡単な操作をGUIで行うことができる
+* 小規模な環境やシンプルな仮想化運用に適している
 
-The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a `footer` or `cite` element, and optionally with in-line changes such as annotations and abbreviations.
+その他のソフトウェアも気になっているので、後々記事にしていければと思っています
 
-### Blockquote without attribution
+以下は、LinuxにCockpitをインストールして仮想マシンを確認する手順を紹介するブログのMarkdown形式のサンプルです。
 
-> Tiam, ad mint andaepu dandae nostion secatur sequo quae.
-> **Note** that you can use *Markdown syntax* within a blockquote.
+## cockpitのインストールと起動
 
-### Blockquote with attribution
+以下のコマンドを実行して、cockpitと仮想マシンの管理に必要なパッケージをインストールします。
 
-> Don't communicate by sharing memory, share memory by communicating.<br>
-> — <cite>Rob Pike[^1]</cite>
-
-[^1]: The above quote is excerpted from Rob Pike's [talk](https://www.youtube.com/watch?v=PAAkCSZUG1c) during Gopherfest, November 18, 2015.
-
-## Tables
-
-Tables aren't part of the core Markdown spec, but Hugo supports supports them out-of-the-box.
-
-   Name | Age
---------|------
-    Bob | 27
-  Alice | 23
-
-### Inline Markdown within tables
-
-| Italics   | Bold     | Code   |
-| --------  | -------- | ------ |
-| *italics* | **bold** | `code` |
-
-| A                                                        | B                                                                                                             | C                                                                                                                                    | D                                                 | E                                                          | F                                                                    |
-|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|------------------------------------------------------------|----------------------------------------------------------------------|
-| Lorem ipsum dolor sit amet, consectetur adipiscing elit. | Phasellus ultricies, sapien non euismod aliquam, dui ligula tincidunt odio, at accumsan nulla sapien eget ex. | Proin eleifend dictum ipsum, non euismod ipsum pulvinar et. Vivamus sollicitudin, quam in pulvinar aliquam, metus elit pretium purus | Proin sit amet velit nec enim imperdiet vehicula. | Ut bibendum vestibulum quam, eu egestas turpis gravida nec | Sed scelerisque nec turpis vel viverra. Vivamus vitae pretium sapien |
-
-## Code Blocks
-### Code block with backticks
-
-```html
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Example HTML5 Document</title>
-</head>
-<body>
-  <p>Test</p>
-</body>
-</html>
+```bash
+sudo apt install cockpit cockpit-machines
 ```
 
-### Code block indented with four spaces
+インストールが完了したら、Cockpitサービスを開始します。
 
-    <!doctype html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>Example HTML5 Document</title>
-    </head>
-    <body>
-      <p>Test</p>
-    </body>
-    </html>
-
-### Diff code block
-
-```diff
-[dependencies.bevy]
-git = "https://github.com/bevyengine/bevy"
-rev = "11f52b8c72fc3a568e8bb4a4cd1f3eb025ac2e13"
-- features = ["dynamic"]
-+ features = ["jpeg", "dynamic"]
+```bash
+sudo systemctl start cockpit
 ```
 
-### One line code block
+## cockpit Webインターフェースにアクセス
 
-```html
-<p>A paragraph</p>
+cockpitの起動が完了したため、Webブラウザから9090ポートで管理画面にアクセスできます。  
+
+```
+https://<サーバーのIPアドレス>:9090
 ```
 
-## List Types
+以下のようなログインページが表示されるため、ubuntuのログインユーザーでログインします
 
-### Ordered List
+![cockpit_login](uploads/cockpit_login.png)
 
-1. First item
-2. Second item
-3. Third item
+ログインすると以下のような画面になります
 
-### Unordered List
+![cockpit_main](uploads/cockpit_main.png)
 
-* List item
-* Another item
-* And another item
+そして、仮想マシンのタブを開くと既に作成しているubuntu001が確認でき、  
+このページからは仮想マシンに対して以下の操作が可能となっています
+* VMのインポート/新規作成
+* VMの電源操作(起動、停止、再起動)
+* VMの移行
+* VMの削除
 
-### Nested list
+![cockpit_vms](uploads/cockpit_vms.png)
 
-* Fruit
-  * Apple
-  * Orange
-  * Banana
-* Dairy
-  * Milk
-  * Cheese
+また、VM名をクリックすることでその仮想マシンの詳細を確認することができます
 
-## Other Elements — abbr, sub, sup, kbd, mark
+![cockpit_vm1](uploads/cockpit_vm.png)
 
-<abbr title="Graphics Interchange Format">GIF</abbr> is a bitmap image format.
+![cockpit_vm2](uploads/cockpit_vm2.png)
 
-H<sub>2</sub>O
+ここからVMのコンソールを操作することができるため、ここで作成したubuntu001のセットアップを行ないます  
+(この記事では本手順は省略します。わからない方は[こちら](https://gihyo.jp/admin/serial/01/ubuntu-recipe/0820)を参考にしていただけると良いかもしれません。)
 
-X<sup>n</sup> + Y<sup>n</sup> = Z<sup>n</sup>
-
-Press <kbd>CTRL</kbd> + <kbd>ALT</kbd> + <kbd>Delete</kbd> to end the session.
-
-Most <mark>salamanders</mark> are nocturnal, and hunt for insects, worms, and other small creatures.
+![cockpit_vm_cdrom1](./uploads/cockpit_vm_cdrom1.png)
+![cockpit_vm_cdrom2](./uploads/cockpit_vm_cdrom2.png)
