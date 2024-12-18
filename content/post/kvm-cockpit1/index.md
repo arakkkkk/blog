@@ -1,6 +1,6 @@
 ---
 title: 【KVMの仮想化入門③】cockpitでブラウザからVMを操作してみる
-date: 2024-12-12
+date: 2024-12-16
 description: cockpitを使ってブラウザからVMを操作してみる
 tags: 
     - KVM
@@ -8,6 +8,8 @@ tags:
 categories:
     - KVM
 ---
+
+前回はvirshを使って、CLIからVMを構築しました。今回はVMをブラウザから操作するためのcockpitをインストールして動かして見ようと思います
 
 ## cockpitとは:
 cockpitとは、下記特徴を持つソフトウェアです。今回は仮想化のために使用しますが、それはあくまでcockpitの機能の一部を利用する形となります
@@ -68,5 +70,5 @@ https://<サーバーのIPアドレス>:9090
 ここからVMのコンソールを操作することができるため、ここで作成したubuntu001のセットアップを行ないます  
 (この記事では本手順は省略します。わからない方は[こちら](https://gihyo.jp/admin/serial/01/ubuntu-recipe/0820)を参考にしていただけると良いかもしれません。)
 
-![cockpit_vm_cdrom1](./uploads/cockpit_vm_cdrom1.png)
-![cockpit_vm_cdrom2](./uploads/cockpit_vm_cdrom2.png)
+![cockpit_vm_cdrom1](uploads/cockpit_vm_cdrom1.png)
+![cockpit_vm_cdrom2](uploads/cockpit_vm_cdrom2.png)

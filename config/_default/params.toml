@@ -14,7 +14,7 @@ lastUpdated = "Jan 02, 2006 15:04 MST"
 
 [sidebar]
 emoji = "🐒"
-subtitle = "インフラエンジニア。興味が湧いたことを色々書きます。"
+subtitle = "たぶんインフラエンジニア。興味が湧いたことを色々書きます。"
 
 [sidebar.avatar]
 enabled = true
@@ -66,7 +66,8 @@ src = ""
 
 [colorScheme]
 toggle = true
-default = "auto"
+# default = "auto"
+default = "light"
 
 [imageProcessing.cover]
 enabled = true
