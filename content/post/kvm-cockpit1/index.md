@@ -70,5 +70,5 @@ https://<サーバーのIPアドレス>:9090
 ここからVMのコンソールを操作することができるため、ここで作成したubuntu001のセットアップを行ないます  
 (この記事では本手順は省略します。わからない方は[こちら](https://gihyo.jp/admin/serial/01/ubuntu-recipe/0820)を参考にしていただけると良いかもしれません。)
 
-![cockpit_vm_cdrom1](uploads/cockpit_vm_cdrom1.png)
-![cockpit_vm_cdrom2](uploads/cockpit_vm_cdrom2.png)
+<!-- ![cockpit_vm_cdrom1](uploads/cockpit_vm_cdrom1.png) -->
+<!-- ![cockpit_vm_cdrom2](uploads/cockpit_vm_cdrom2.png) -->

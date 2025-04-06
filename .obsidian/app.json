@@ -1,0 +1,18 @@
+{
+  "showInlineTitle": true,
+  "trashOption": "local",
+  "alwaysUpdateLinks": true,
+  "vimMode": true,
+  "showLineNumber": false,
+  "readableLineLength": false,
+  "showFrontmatter": false,
+  "foldHeading": true,
+  "foldIndent": false,
+  "promptDelete": false,
+  "spellcheck": false,
+  "tabSize": 4,
+  "attachmentFolderPath": "./uploads",
+  "newFileLocation": "current",
+  "newLinkFormat": "relative",
+  "showIndentGuide": false
+}
