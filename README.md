@@ -13,3 +13,4 @@ hugo apt install hugo
 ```
 hugo server --bind=0.0.0.0
 ```
+
