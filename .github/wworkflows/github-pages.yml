@@ -26,8 +26,8 @@ jobs:
       - name: Build
         # working-directory: docs # docs以下にsiteをおいた場合
         run: hugo --minify
-
-      - name: Deploy
+      - name: Create CNAME file
+        run: echo 'memos.arakkk.com' > public/CNAME
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
