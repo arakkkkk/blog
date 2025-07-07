@@ -17,11 +17,17 @@ categories:
 
 ### 補完機能
 利用している補完用プラグインとの連携も可能です。
-![mov](uploads/copilot_completion.mp4)
+{{< video
+  src="uploads/copilot_completion.mp4"
+  width="600"
+>}}
 
 ### チャットモード (Askモードに相当する機能)
 指定した行/ファイル/バッファに対してチャットでのやり取りが可能です。変更に対する差分の確認や反映もできます。
-![mov](uploads/copilot_chat.mp4)
+{{< video
+  src="uploads/copilot_chat.mp4"
+  width="600"
+>}}
 
 また、便利な機能としてプロンプトを事前に用意しておくことができ、スラッシュコマンドで呼び出して利用することができます
 ![copilot_slash](uploads/copilot_slash.png)

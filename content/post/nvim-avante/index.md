@@ -1,6 +1,6 @@
 ---
 title: NeovimでAIコーディング (Avante編)
-date: 2025-7-7
+date: 2025-07-07
 description: NeovimでAvanteを利用するための設定と活用方法
 tags: 
     - Neovim
