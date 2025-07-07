@@ -1,6 +1,6 @@
 ---
 title: NeovimでAIコーディング (Copilot編)
-date: 2025-7-5
+date: 2025-07-05
 description: NeovimでCopilotを利用するための設定と活用方法
 tags: 
     - Neovim

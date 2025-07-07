@@ -1,6 +1,6 @@
 ---
 title: Neovimで使えるAIコーディング支援プラグイン比較【2025年版】
-date: 2025-6-20
+date: 2025-06-20
 description: Neovimを使ったAIコーディング方法を模索します
 tags: 
     - NeoVim
