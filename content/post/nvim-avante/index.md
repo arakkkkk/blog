@@ -17,8 +17,8 @@ categories:
 
 ### チャットモード
 
-Avanteでは、コードの質問のみ行う`:AvanteAsk`と、編集を同時に行える`:AvanteChat`のコマンドが用意されています。
-`:AvanteChat`では、チャットをしながらコードの変更が可能です。CopilotChatのAgentモード相当の機能を有しており、複数ファイルの編集や、ファイル作成も行ってくれます。
+Avanteでは、コードの質問のみ行う`:AvanteAsk`と、編集を同時に行える`:AvanteChat`のコマンドが用意されています。  
+`:AvanteChat`では、チャットをしながらコードの変更が可能です。CopilotChatのAgentモード相当の機能を有しており、複数ファイルの編集や、ファイル作成も行ってくれます。  
 また、コードの差分も見やすく表示されるので使い勝手は非常に良いです。
 ![avante_chat](uploads/avante_chat.png)
 
@@ -26,7 +26,7 @@ Avanteでは、コードの質問のみ行う`:AvanteAsk`と、編集を同時�
 ![avante_edit](uploads/avante_edit.png)
 
 また、mcphub.nvimを利用することでMCPも利用可能です。こちらはまだ試せていないので、別記事にて紹介しようと思います。
-https://ravitemer.github.io/mcphub.nvim/extensions/avante.html
+https://ravitemer.github.io/mcphub.nvim/extensions/avante.html  
 
 ## 設定方法
 
@@ -90,6 +90,8 @@ https://ravitemer.github.io/mcphub.nvim/extensions/avante.html
 ## まとめ
 
 Copilot.luaと比較すると機能がかなり豊富になっていることがわかったかと思います。
+
 チャットモードによるファイル編集・ファイル作成、部分的な編集ができるとともに、MCPも利用することができるのでこのプラグインを上手に活用できればVS Codeに劣らずAIを用いたコーディングができるプラグインになっているかと思います。
+
 但し、難点としてチャットの回答が体感遅いのでこちらは我慢が必要です。(もしくは、copilotで試していたので他のモデルを利用することで改善するかもしれません。)
 

@@ -66,13 +66,3 @@ categories:
 * **diffで提案 → すぐ適用したい人**：`avante.nvim`
 * **Copilot Chat を Neovim で使いたい人**：`CopilotChat.nvim`
 * **フルスタックAI開発支援（補完〜ファイル生成〜複数ファイル編集）を目指す人**：`codecompanion.nvim`
-
----
-
-必要なら設定例やサンプルプロンプトなど、さらに掘り下げてご紹介できます！
-
-[1]: https://github.com/yetone/avante.nvim?utm_source=chatgpt.com "yetone/avante.nvim: Use your Neovim like using Cursor AI IDE!"
-[2]: https://github.com/LazyVim/LazyVim/discussions/4402?utm_source=chatgpt.com "avante.nvim · LazyVim LazyVim · Discussion #4402 - GitHub"
-[3]: https://neovim.discourse.group/t/what-is-the-current-and-future-state-of-ai-integration-in-neovim/5303?utm_source=chatgpt.com "What is the current and future state of AI integration in Neovim?"
-[4]: https://github.com/CopilotC-Nvim/CopilotChat.nvim?utm_source=chatgpt.com "CopilotC-Nvim/CopilotChat.nvim: Chat with GitHub Copilot in Neovim"
-[5]: https://github.com/olimorris/codecompanion.nvim?utm_source=chatgpt.com "olimorris/codecompanion.nvim: AI-powered coding, seamlessly in ..."
