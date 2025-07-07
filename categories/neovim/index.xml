@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Neovim on arakkk</title><link>http://192.168.122.81/categories/neovim/</link><description>Recent content in Neovim on arakkk</description><generator>Hugo -- gohugo.io</generator><language>ja-JP</language><lastBuildDate>Mon, 07 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://192.168.122.81/categories/neovim/index.xml" rel="self" type="application/rss+xml"/><item><title>NeovimでAIコーディング (Avante編)</title><link>http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/</link><pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/</guid><description>&lt;h1 id="neovimでavanteを使いたい人向けのガイド202575時点">NeovimでAvanteを使いたい人向けのガイド(2025/7/5時点)
+&lt;/h1>&lt;p>前回はCopilot.luaについて書いたので、今回はAvanteについて紹介してみます。&lt;/p>
+&lt;h2 id="neovimのavanteプラグインでできること">NeovimのAvanteプラグインでできること
+&lt;/h2>&lt;h3 id="チャットモード">チャットモード
+&lt;/h3>&lt;p>Avanteでは、コードの質問のみ行う&lt;code>:AvanteAsk&lt;/code>と、編集を同時に行える&lt;code>:AvanteChat&lt;/code>のコマンドが用意されています。&lt;br>
+&lt;code>:AvanteChat&lt;/code>では、チャットをしながらコードの変更が可能です。CopilotChatのAgentモード相当の機能を有しており、複数ファイルの編集や、ファイル作成も行ってくれます。&lt;br>
+また、コードの差分も見やすく表示されるので使い勝手は非常に良いです。
+&lt;img src="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_chat.png"
+width="2119"
+height="1375"
+srcset="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_chat_hu_845a2678f3a3451a.png 480w, http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_chat_hu_2529d9bb75c23db9.png 1024w"
+loading="lazy"
+alt="avante_chat"
+class="gallery-image"
+data-flex-grow="154"
+data-flex-basis="369px"
+>&lt;/p>
+&lt;p>部分的に編集したければ、&lt;code>:AvanteEdit&lt;/code>を以下画像のように利用することも可能です。
+&lt;img src="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_edit.png"
+width="1259"
+height="382"
+srcset="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_edit_hu_cb861060a183fdcb.png 480w, http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_edit_hu_fdb1e1947760bdee.png 1024w"
+loading="lazy"
+alt="avante_edit"
+class="gallery-image"
+data-flex-grow="329"
+data-flex-basis="790px"
+>&lt;/p>
+&lt;p>また、mcphub.nvimを利用することでMCPも利用可能です。こちらはまだ試せていないので、別記事にて紹介しようと思います。
+&lt;a class="link" href="https://ravitemer.github.io/mcphub.nvim/extensions/avante.html" target="_blank" rel="noopener"
+>https://ravitemer.github.io/mcphub.nvim/extensions/avante.html&lt;/a>&lt;/p>
+&lt;h2 id="設定方法">設定方法
+&lt;/h2>&lt;p>ここでは &lt;code>lazy.nvim&lt;/code> を使った設定方法を記載しています。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;yetone/avante.nvim&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">build&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kr">function&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">-- conditionally use the correct build system for the current OS&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">vim.fn&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">has&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;win32&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="kr">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="s2">&amp;#34;powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="s2">&amp;#34;make&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">dependencies&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;nvim-treesitter/nvim-treesitter&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;stevearc/dressing.nvim&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;nvim-lua/plenary.nvim&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;MunifTanjim/nui.nvim&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">ops&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">---@alias Provider &amp;#34;claude&amp;#34; | &amp;#34;openai&amp;#34; | &amp;#34;azure&amp;#34; | &amp;#34;gemini&amp;#34; | &amp;#34;cohere&amp;#34; | &amp;#34;copilot&amp;#34; | string&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">provider&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;copilot&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="avanteで使えるプロンプトの接頭辞">Avanteで使えるプロンプトの接頭辞
+&lt;/h2>&lt;h3 id="mentions">&lt;code>@mentions&lt;/code>
+&lt;/h3>&lt;p>&lt;code>@mentions&lt;/code>を使うことでプロンプトに情報を追加することができます&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Mention&lt;/th>
+&lt;th>説明&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>@codebase&lt;/td>
+&lt;td>プロジェクト全体のソースコード&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>@diagnostics&lt;/td>
+&lt;td>diagnosticの情報&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>@file&lt;/td>
+&lt;td>特定のファイル&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>@quickfix&lt;/td>
+&lt;td>quickfix&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>@buffers&lt;/td>
+&lt;td>buffers&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;code>@codebase&lt;/code>と&lt;code>@file&lt;/code>がよく使うメンションになるかと思います。また、&lt;code>@file&lt;/code>については以下画像のようにファイルの検索が可能で便利です。
+&lt;img src="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_mention_file.png"
+width="1246"
+height="507"
+srcset="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_mention_file_hu_a319d7b619b1c027.png 480w, http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-avante%E7%B7%A8/uploads/avante_mention_file_hu_8de35986bee257f1.png 1024w"
+loading="lazy"
+alt="avante_mention_file"
+class="gallery-image"
+data-flex-grow="245"
+data-flex-basis="589px"
+>&lt;/p>
+&lt;h3 id="heading">&lt;code>/&lt;/code>
+&lt;/h3>&lt;p>スラッシュコマンドを使うことで特定の機能を呼び出すことができます&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Mention&lt;/th>
+&lt;th>説明&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>/help&lt;/td>
+&lt;td>ヘルプを表示します&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>/lines&lt;/td>
+&lt;td>特定の行について質問します（例: /lines &lt;start>-&lt;end> &amp;lt;質問&amp;gt;）&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>/new&lt;/td>
+&lt;td>新しいチャットを開始します&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>/init&lt;/td>
+&lt;td>現在のプロジェクトに基づいてAGENTS.mdを初期化します&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>/clear&lt;/td>
+&lt;td>チャット履歴をクリアします&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>/commit&lt;/td>
+&lt;td>変更をコミットします&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>/compact&lt;/td>
+&lt;td>トークン節約のため履歴メッセージを圧縮します&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;code>/commit&lt;/code>は自動で作成してコミットしてくれるので便利です。但し、&lt;code>git add&lt;/code>、&lt;code>git push&lt;/code>は自身で行う必要があります。&lt;/p>
+&lt;h2 id="まとめ">まとめ
+&lt;/h2>&lt;p>Copilot.luaと比較すると機能がかなり豊富になっていることがわかったかと思います。&lt;/p>
+&lt;p>チャットモードによるファイル編集・ファイル作成、部分的な編集ができるとともに、MCPも利用することができるのでこのプラグインを上手に活用できればVS Codeに劣らずAIを用いたコーディングができるプラグインになっているかと思います。&lt;/p>
+&lt;p>但し、難点としてチャットの回答が体感遅いのでこちらは我慢が必要です。(もしくは、copilotで試していたので他のモデルを利用することで改善するかもしれません。)&lt;/p></description></item><item><title>NeovimでAIコーディング (Copilot編)</title><link>http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/</link><pubDate>Sat, 05 Jul 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/</guid><description>&lt;h1 id="neovimでcopilotを使いたい人向けのガイド202575時点">NeovimでCopilotを使いたい人向けのガイド(2025/7/5時点)
+&lt;/h1>&lt;p>前回の記事で、NeovimのAIコーディング用プラグインを比較しました。今回はそのうちのCopilot.luaについてもう少し詳しく紹介しようと思います。&lt;/p>
+&lt;h2 id="neovimのcopilotプラグインでできること">NeovimのCopilotプラグインでできること
+&lt;/h2>&lt;h3 id="補完機能">補完機能
+&lt;/h3>&lt;p>利用している補完用プラグインとの連携も可能です。
+&lt;div class="video-wrapper">
+&lt;video
+controls
+src="uploads/copilot_completion.mp4"
+>
+&lt;p>
+Your browser doesn't support HTML5 video. Here is a
+&lt;a href="uploads/copilot_completion.mp4">link to the video&lt;/a> instead.
+&lt;/p>
+&lt;/video>
+&lt;/div>
+&lt;/p>
+&lt;h3 id="チャットモード-askモードに相当する機能">チャットモード (Askモードに相当する機能)
+&lt;/h3>&lt;p>指定した行/ファイル/バッファに対してチャットでのやり取りが可能です。変更に対する差分の確認や反映もできます。
+&lt;div class="video-wrapper">
+&lt;video
+controls
+src="uploads/copilot_chat.mp4"
+>
+&lt;p>
+Your browser doesn't support HTML5 video. Here is a
+&lt;a href="uploads/copilot_chat.mp4">link to the video&lt;/a> instead.
+&lt;/p>
+&lt;/video>
+&lt;/div>
+&lt;/p>
+&lt;p>また、便利な機能としてプロンプトを事前に用意しておくことができ、スラッシュコマンドで呼び出して利用することができます
+&lt;img src="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_slash.png"
+width="1459"
+height="454"
+srcset="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_slash_hu_6fb261fdcae3e2d7.png 480w, http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_slash_hu_f6a622cbb0b0f262.png 1024w"
+loading="lazy"
+alt="copilot_slash"
+class="gallery-image"
+data-flex-grow="321"
+data-flex-basis="771px"
+>&lt;/p>
+&lt;p>また、telescopeと連携することでエディターからプロンプトを直接呼び出すことも可能です。これは他のプラグインにはなかなかない機能で便利だと感じました。&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_telscope.png"
+width="1315"
+height="1230"
+srcset="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_telscope_hu_b9f6ea9477b33023.png 480w, http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_telscope_hu_68c8a596b1f2f245.png 1024w"
+loading="lazy"
+alt="copilot_telscope"
+class="gallery-image"
+data-flex-grow="106"
+data-flex-basis="256px"
+>&lt;/p>
+&lt;h2 id="neovimのcopilotプラグインでできないこと">NeovimのCopilotプラグインでできないこと
+&lt;/h2>&lt;h3 id="aiエージェントによるファイル作成や複数ファイルの編集">AIエージェントによるファイル作成や複数ファイルの編集
+&lt;/h3>&lt;p>VSCodeのCopilotChatにおけるAgentモードに相当する機能は現状利用ができません&lt;/p>
+&lt;h2 id="設定方法">設定方法
+&lt;/h2>&lt;p>ここでは &lt;code>lazy.nvim&lt;/code> を使った設定方法を記載しています。&lt;/p>
+&lt;h3 id="copilot">Copilot
+&lt;/h3>&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/zbirenbaum/copilot.lua" target="_blank" rel="noopener"
+>zbirenbaum/copilot.lua&lt;/a>&lt;/li>
+&lt;li>&lt;code>:Copilot auth&lt;/code> で認証を行います。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;zbirenbaum/copilot.lua&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">cmd&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;Copilot&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">event&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;InsertEnter&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">config&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kr">function&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">require&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;copilot&amp;#34;&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="n">setup&lt;/span>&lt;span class="p">({&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">suggestion&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="n">enabled&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">false&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">panel&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="n">enabled&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">false&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">auto_trigger&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="copilot-cmp">copilot-cmp
+&lt;/h3>&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#configuration" target="_blank" rel="noopener"
+>zbirenbaum/copilot-cmp&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>利用している補完用プラグインによって、必要な追加設定が異なります。&lt;br>
+詳細は &lt;a class="link" href="https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#configuration" target="_blank" rel="noopener"
+>こちら&lt;/a> を参考にしてください。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;zbirenbaum/copilot-cmp&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">config&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kr">function&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">require&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;copilot_cmp&amp;#34;&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="n">setup&lt;/span>&lt;span class="p">({})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="copilotchat">CopilotChat
+&lt;/h3>&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/CopilotC-Nvim/CopilotChat.nvim" target="_blank" rel="noopener"
+>CopilotC-Nvim/CopilotChat.nvim&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;CopilotC-Nvim/CopilotChat.nvim&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">branch&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;main&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">cmd&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="s2">&amp;#34;CopilotChat&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;CopilotChatOpen&amp;#34;&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">build&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;make tiktoken&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">-- Only on MacOS or Linux&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">config&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kr">function&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">require&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;configs.copilot-chat&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="copilotchatで使えるプロンプトの接頭辞">CopilotChatで使えるプロンプトの接頭辞
+&lt;/h2>&lt;p>CopilotChatでは、プロンプトでの接頭辞を活用できます。&lt;/p>
+&lt;h3 id="1---プリセットスラッシュコマンド">1. &lt;code>/&lt;/code> — &lt;strong>プリセット／スラッシュコマンド&lt;/strong>
+&lt;/h3>&lt;p>&lt;code>/&lt;/code> に続けてコマンド名やプリセット名を書くと、あらかじめ用意された定型プロンプトを呼び出せます。&lt;/p>
+&lt;ul>
+&lt;li>例: &lt;code>/Explain&lt;/code> → 選択中のコードの解説を依頼&lt;/li>
+&lt;li>例: &lt;code>/Tests&lt;/code> → 単体テストを生成&lt;/li>
+&lt;li>例: &lt;code>/Fix&lt;/code> → バグ修正提案&lt;/li>
+&lt;/ul>
+&lt;p>利用できるプリセットは環境や設定に応じて異なり、&lt;code>/&lt;/code> を入力すると候補がポップアップします。&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_slash.png"
+width="1459"
+height="454"
+srcset="http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_slash_hu_6fb261fdcae3e2d7.png 480w, http://192.168.122.81/p/neovim%E3%81%A7ai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-copilot%E7%B7%A8/uploads/copilot_slash_hu_f6a622cbb0b0f262.png 1024w"
+loading="lazy"
+alt="copilot_slash"
+class="gallery-image"
+data-flex-grow="321"
+data-flex-basis="771px"
+>&lt;/p>
+&lt;h3 id="2---コンテキスト変数context">2. &lt;code>#&lt;/code> — &lt;strong>コンテキスト変数（Context）&lt;/strong>
+&lt;/h3>&lt;p>&lt;code>#&lt;/code> に続けてコンテキスト名と必要に応じて入力を指定することで、チャットに「追加情報」を渡せます。以下のようなものがあります：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>#buffer&lt;/code> … 現在のバッファ内容&lt;/li>
+&lt;li>&lt;code>#buffer:2&lt;/code> … バッファ番号 2 の内容&lt;/li>
+&lt;li>&lt;code>#files:*.js&lt;/code> … ワークスペース内の &lt;code>*.js&lt;/code> ファイル全体&lt;/li>
+&lt;li>&lt;code>#git:staged&lt;/code> … ステージされた git diff&lt;/li>
+&lt;li>&lt;code>#url:https://…&lt;/code> … 指定 URL の内容取得&lt;/li>
+&lt;/ul>
+&lt;p>AI は必要に応じて「このコンテキストが欲しい」と提案してくることもあります。&lt;/p>
+&lt;h3 id="3---スティッキープロンプトsticky-prompt">3. &lt;code>&amp;gt;&lt;/code> — &lt;strong>スティッキープロンプト（Sticky Prompt）&lt;/strong>
+&lt;/h3>&lt;p>Markdown の引用記法と同じく行頭に &lt;code>&amp;gt;&lt;/code> を置くと、そのプロンプトは「スティッキー（常に貼り付け）」として保持され、&lt;strong>新しいチャットを始めるたびに自動で先頭に挿入&lt;/strong>されます。&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>例:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">&amp;gt; You are a helpful coding assistant.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;gt; Please respond concisely.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>とすると、どんな質問をしても毎回この指示が一番最初に送られます。&lt;br>
+設定ファイルでデフォルトのスティッキープロンプトを登録することも可能です。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>これらを組み合わせることで、&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>/Review #buffer&lt;/code> のように「現在のバッファをレビューしてほしい」&lt;/li>
+&lt;li>事前に &lt;code>&amp;gt; markdown&lt;/code> を貼って「以降の回答を Markdown 形式で」
+…といった柔軟なチャット操作が可能になります。&lt;/li>
+&lt;/ul>
+&lt;h2 id="まとめ">まとめ
+&lt;/h2>&lt;p>AIの補完機能については、競合が少なくCopilot.luaが無難な選択肢になりそうです。&lt;br>
+また、CopilotChatは機能としてはシンプルで、まだAIを使ったコーディングを行ったことがない方にとっては取り入れやすいプラグインかと思います。&lt;/p>
+&lt;p>但し、Askモード相当の機能しかないため、がっつりコードを書く人にとっては機能的に物足りないプラグインという感想です。&lt;br>
+まだ開発も続いていそうなのでまた大きなアップデートが来たら記事にしてみたいと思います。&lt;/p></description></item><item><title>Neovimで使えるAIコーディング支援プラグイン比較【2025年版】</title><link>http://192.168.122.81/p/neovim%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8Bai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E6%94%AF%E6%8F%B4%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E6%AF%94%E8%BC%832025%E5%B9%B4%E7%89%88/</link><pubDate>Fri, 20 Jun 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/neovim%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8Bai%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E6%94%AF%E6%8F%B4%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E6%AF%94%E8%BC%832025%E5%B9%B4%E7%89%88/</guid><description>&lt;h2 id="neovim-aiコーディング用プラグイン20250620">Neovim AIコーディング用プラグイン（2025/06/20）
+&lt;/h2>&lt;p>他にも様々あるかと思いますが、コーディングのサポートがあり、GitHubのスター数が1k以上ということを基準に探してみました。&lt;/p>
+&lt;h2 id="-比較対象プラグイン">🔍 比較対象プラグイン
+&lt;/h2>&lt;ul>
+&lt;li>&lt;strong>avante.nvim&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>Copilot.vnim (+CopilotChat.nvim)&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>codecompanion.nvim&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;h2 id="-機能比較表">📊 機能比較表
+&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>プラグイン名&lt;/th>
+&lt;th>GitHub Star&lt;/th>
+&lt;th>補完機能&lt;/th>
+&lt;th>チャットモード&lt;/th>
+&lt;th>ファイル作成&lt;/th>
+&lt;th>複数ファイル同時編集&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>avante.nvim&lt;/td>
+&lt;td>14.9k&lt;/td>
+&lt;td>×&lt;/td>
+&lt;td>◯&lt;/td>
+&lt;td>◯&lt;/td>
+&lt;td>✕&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CopilotChat.nvim&lt;/td>
+&lt;td>3K(3.5k)&lt;/td>
+&lt;td>◯&lt;/td>
+&lt;td>◯&lt;/td>
+&lt;td>✕&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>codecompanion.nvim&lt;/td>
+&lt;td>4.4k&lt;/td>
+&lt;td>×&lt;/td>
+&lt;td>◯&lt;/td>
+&lt;td>✅ Slashで新規作成可&lt;/td>
+&lt;td>✅ 複数チャット同時 ＆ ワークフロー可能&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;hr>
+&lt;h2 id="-詳細な解説">💡 詳細な解説
+&lt;/h2>&lt;h3 id="avantenvim">avante.nvim
+&lt;/h3>&lt;ul>
+&lt;li>&lt;strong>スター数&lt;/strong>：約1.3K ([github.com][1], [github.com][2], [neovim.discourse.group][3])&lt;/li>
+&lt;li>&lt;strong>補完機能&lt;/strong>：完全なインライン補完ではなく、チャットで差分を提案 → &lt;strong>diff形式で即適用&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>チャットモード&lt;/strong>：あり。対話形式でdiff提案 &lt;/li>
+&lt;li>&lt;strong>ワークスペース読み込み&lt;/strong>：基本的には&lt;strong>現在のファイルのみ&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>ファイル作成&lt;/strong>：未対応&lt;/li>
+&lt;li>&lt;strong>複数ファイル対応&lt;/strong>：diffは単一ファイル中心&lt;/li>
+&lt;/ul>
+&lt;h3 id="copilotchatnvim">CopilotChat.nvim
+&lt;/h3>&lt;ul>
+&lt;li>&lt;strong>スター数&lt;/strong>：約3K &lt;/li>
+&lt;li>&lt;strong>補完機能&lt;/strong>：copilot.lua 経由でインライン補完&lt;/li>
+&lt;li>&lt;strong>チャットモード&lt;/strong>：あり。チャットUI＋diff 組み込み ([github.com][4])&lt;/li>
+&lt;li>&lt;strong>ワークスペース読み込み&lt;/strong>：Smart embedding によるバッファ/ファイル全体の読み込み ([github.com][4])&lt;/li>
+&lt;li>&lt;strong>ファイル作成&lt;/strong>：難しいが Quickfix 連携で実質可能&lt;/li>
+&lt;li>&lt;strong>複数ファイル対応&lt;/strong>：Quickfix／複数バッファ処理で対応&lt;/li>
+&lt;/ul>
+&lt;h3 id="codecompanionnvim">codecompanion.nvim
+&lt;/h3>&lt;ul>
+&lt;li>&lt;strong>スター数&lt;/strong>：約4.4K ([github.com][4])&lt;/li>
+&lt;li>&lt;strong>補完機能&lt;/strong>：インライン補完対応（複数LLM）&lt;/li>
+&lt;li>&lt;strong>チャットモード&lt;/strong>：あり。チャットバッファ、エージェント機能 ([github.com][5])&lt;/li>
+&lt;li>&lt;strong>ワークスペース読み込み&lt;/strong>：バッファ、LSP、ツール／ワークフローにも対応 &lt;/li>
+&lt;li>&lt;strong>ファイル作成&lt;/strong>：Slash Commands 等で&lt;strong>新規ファイル生成に対応&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>複数ファイル対応&lt;/strong>：複数チャット、エージェントで同時操作が可能&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="-おすすめ用途ごとに選ぶなら">🧭 おすすめ用途ごとに選ぶなら？
+&lt;/h2>&lt;ul>
+&lt;li>&lt;strong>diffで提案 → すぐ適用したい人&lt;/strong>：&lt;code>avante.nvim&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Copilot Chat を Neovim で使いたい人&lt;/strong>：&lt;code>CopilotChat.nvim&lt;/code>&lt;/li>
+&lt;li>&lt;strong>フルスタックAI開発支援（補完〜ファイル生成〜複数ファイル編集）を目指す人&lt;/strong>：&lt;code>codecompanion.nvim&lt;/code>&lt;/li>
+&lt;/ul></description></item></channel></rss>

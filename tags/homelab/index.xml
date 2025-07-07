@@ -1,0 +1,1020 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homelab on arakkk</title><link>http://192.168.122.81/tags/homelab/</link><description>Recent content in Homelab on arakkk</description><generator>Hugo -- gohugo.io</generator><language>ja-JP</language><lastBuildDate>Sat, 05 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://192.168.122.81/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>【KVMで自宅インフラ構築】4.DNSサーバーの構築</title><link>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/</link><pubDate>Sat, 05 Apr 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/</guid><description>&lt;p>前回は仮想ネットワーク上にProxyサーバーを構築しました
+今回はDNSサーバーを構築し、LANで名前解決ができるようにします&lt;/p>
+&lt;ul>
+&lt;li>1.構成と準備&lt;/li>
+&lt;li>2.Webサーバーの構築&lt;/li>
+&lt;li>3.Proxyサーバーの構築&lt;/li>
+&lt;li>4.DNSサーバーの構築 &amp;lt;- ここ&lt;/li>
+&lt;li>5.Grafanaで監視基盤の構築&lt;/li>
+&lt;/ul>
+&lt;h2 id="ネットワーク構成のイメージ図">ネットワーク構成のイメージ図
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>完成形&lt;/p>
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233329.png"
+width="953"
+height="406"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233329_hu_1c4bba61b3651171.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233329_hu_f4c2d22ae351df69.png 1024w"
+loading="lazy"
+alt="index-20250320233329"
+class="gallery-image"
+data-flex-grow="234"
+data-flex-basis="563px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>今回の内容&lt;/p>
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233356.png"
+width="953"
+height="406"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233356_hu_fb161d082c414a9e.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233356_hu_82211d0fabe991a0.png 1024w"
+loading="lazy"
+alt="index-20250406233356"
+class="gallery-image"
+data-flex-grow="234"
+data-flex-basis="563px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="仮想マシンのデプロイ">仮想マシンのデプロイ
+&lt;/h2>&lt;p>まずはDNSサーバー用の仮想マシンを作成していきます。
+前回と同じ手順になるので作成や起動の手順は割愛します。
+作成した仮想マシンの詳細は以下です&lt;/p>
+&lt;ul>
+&lt;li>名前: dns-server&lt;/li>
+&lt;li>管理ネットワーク側IP: 192.168.122.30&lt;/li>
+&lt;li>仮想ネットワーク側IP: 192.168.123.130&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233449.png"
+width="3075"
+height="1769"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233449_hu_345ee40fabb267c6.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233449_hu_958ec7c057881754.png 1024w"
+loading="lazy"
+alt="index-20250406233449"
+class="gallery-image"
+data-flex-grow="173"
+data-flex-basis="417px"
+>&lt;/p>
+&lt;h2 id="dnsサーバの構築">DNSサーバの構築
+&lt;/h2>&lt;p>&lt;a class="link" href="https://unbound.docs.nlnetlabs.nl/en/latest/" target="_blank" rel="noopener"
+>unbound&lt;/a>を用いてDNSサーバーを構築します。
+まずは、デプロイした仮想マシン上で&lt;code>unbound&lt;/code>をインストールします&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo apt install unbound
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>インストールが完了したら、設定を行っていきます。
+設定ファイルは&lt;code>/etc/unbound/unbound.conf&lt;/code>にあり、以下のように記載されています。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ cat /etc/unbound/unbound.conf
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Unbound configuration file for Debian.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># See the unbound.conf(5) man page.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># See /usr/share/doc/unbound/examples/unbound.conf for a commented
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># reference config file.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># The following line includes additional configuration files from the
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># /etc/unbound/unbound.conf.d directory.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">include-toplevel: &amp;#34;/etc/unbound/unbound.conf.d/*.conf&amp;#34;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;code>/etc/unbound/unbound.conf.d/*.conf&lt;/code>のファイルを読み込むように設定されているため、今回は&lt;code>/etc/unbound/unbound.conf.d/unbound.conf&lt;/code>として設定ファイルを作成します&lt;/p>
+&lt;p>設定ファイルには、&lt;code>server&lt;/code>句と&lt;code>forward-zone&lt;/code>句の二種類を記述し、以下のように記述することで設定が可能です。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">server:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> interface: DNSサーバーのIP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> port: 53
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> access-control: 127.0.0.0/8 allow
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> access-control: LANのCIDR allow
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> use-syslog: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> log-queries: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> local-data: &amp;#34;ドメイン. IN A 転送先のIP&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">forward-zone:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> name: &amp;#34;.&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> forward-addr: フォワード先のプライマリDNS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> forward-addr: フォワード先のセカンダリDNS
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>server句&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>interface: Unboundが待ち受けるIPアドレスを指定&lt;/li>
+&lt;li>port: 使用するポート番号を指定 (DNSの標準ポートは53)&lt;/li>
+&lt;li>access-control: DNSリクエストを許可するクライアントのIP範囲をCIDR形式で指定&lt;/li>
+&lt;li>use-syslog: ログ出力先をsyslogにするかどうかを指定。yes にすると /var/log/syslog に出力されます。&lt;/li>
+&lt;li>log-queries: DNSクエリをログに記録するかどうかの設定。設定しておくとトラブルシュートや監視に便利です。&lt;/li>
+&lt;li>local-data: 特定のホスト名とIPアドレスの対応を定義。(&amp;ldquo;myhost.local. IN A 192.168.1.10&amp;rdquo; とすると、&lt;code>myhost.local&lt;/code>への問い合わせには&lt;code>192.168.1.10&lt;/code>を返します。)
+&lt;strong>forward-zone句&lt;/strong>&lt;/li>
+&lt;li>name: &lt;code>.&lt;/code> は「すべてのドメイン」を意味し、全てのDNSクエリをこのゾーンの設定に従って処理します。&lt;/li>
+&lt;li>forward-addr: クエリを転送する先のDNSサーバーを指定。複数指定可能で、上から順に試行されます。&lt;/li>
+&lt;/ul>
+&lt;p>その他の設定は以下期に記載されているので参考にしてください&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://unbound.jp/unbound/unbound-conf/" target="_blank" rel="noopener"
+>unbound.conf(5) | 日本Unboundユーザー会&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>今回の構成では、以下のように設定します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">server:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> interface: 192.168.122.30
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> port: 53
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> access-control: 127.0.0.0/8 allow
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> access-control: 192.168.122.0/24 allow
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> use-syslog: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> log-queries: yes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> local-data: &amp;#34;memos.local. IN A 192.168.123.115&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">forward-zone:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> name: &amp;#34;.&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> forward-addr: 8.8.8.8
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>設定が完了したらunboundを再起動します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo systemctl restart unbound.service
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>以上でDNSサーバー側の設定は完了です。
+ここからは、構築したDNSサーバーを用いて名前解決ができるようにProxyサーバーへ設定を追加します&lt;/p>
+&lt;h2 id="proxyサーバーで使用するdnsサーバーの指定">Proxyサーバーで使用するDNSサーバーの指定
+&lt;/h2>&lt;p>Proxyサーバーにて、squidで使用するDNSサーバーの設定を行います
+設定はすごく簡単で、&lt;code>/etc/squid/squid.conf&lt;/code>に以下のように設定を追加するだけです&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">dns_nameservers DNSサーバーのIP
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;code>dns_nameservers&lt;/code>の設定について記載されている行があるので、こちらに追記します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl"># TAG: dns_nameservers
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Use this if you want to specify a list of DNS name servers
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># (IP addresses) to use instead of those given in your
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># /etc/resolv.conf file.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># On Windows platforms, if no value is specified here or in
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># the /etc/resolv.conf file, the list of DNS name servers are
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># taken from the Windows registry, both static and dynamic DHCP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># configurations are supported.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Example: dns_nameservers 10.0.0.1 192.172.0.4
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#Default:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Use operating system definitions
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">dns_nameservers 192.168.122.30 # ★追記
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>設定が完了したら、下記コマンドでsquidを再起動します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo systemctl restart squid
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>それでは、構築したDNSサーバーで名前解決ができるか確認していきましょう
+設定がうまく通っていれば、無事&lt;code>http://memos.local:5230&lt;/code>でWebサーバーにアクセスできるようになっていると思います&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250407002930.png"
+width="1621"
+height="1209"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250407002930_hu_fe71804f60073186.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250407002930_hu_e22ba3ee5409a9f7.png 1024w"
+loading="lazy"
+alt="index-20250407002930"
+class="gallery-image"
+data-flex-grow="134"
+data-flex-basis="321px"
+>&lt;/p>
+&lt;p>ポート指定が不格好なので、Webサーバーのポートフォワードを変更します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="o">$&lt;/span> &lt;span class="n">sudo&lt;/span> &lt;span class="n">docker&lt;/span> &lt;span class="n">stop&lt;/span> &lt;span class="n">memos&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">memos&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">$&lt;/span> &lt;span class="n">sudo&lt;/span> &lt;span class="n">docker&lt;/span> &lt;span class="n">rm&lt;/span> &lt;span class="n">memos&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">memos&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">$&lt;/span> &lt;span class="n">sudo&lt;/span> &lt;span class="n">docker&lt;/span> &lt;span class="n">run&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="n">d&lt;/span> &lt;span class="o">--&lt;/span>&lt;span class="n">init&lt;/span> &lt;span class="o">--&lt;/span>&lt;span class="n">name&lt;/span> &lt;span class="n">memos&lt;/span> &lt;span class="o">--&lt;/span>&lt;span class="n">publish&lt;/span> &lt;span class="mi">80&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">5230&lt;/span> &lt;span class="o">--&lt;/span>&lt;span class="n">volume&lt;/span> &lt;span class="o">~/.&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="k">var&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">opt&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span> &lt;span class="n">neosmemo&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">stable&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">bba4c0f06042e102eb7ffa0cd620f8425d4deb26d0162f32b68cb33e4c7c0461&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>これで&lt;code>http://memos.local&lt;/code>だけでアクセスができるようになりました&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250407003455.png"
+width="1621"
+height="1209"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250407003455_hu_de23a0cf19090911.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%894.dns%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250407003455_hu_cf01a7c6e5750fc.png 1024w"
+loading="lazy"
+alt="index-20250407003455"
+class="gallery-image"
+data-flex-grow="134"
+data-flex-basis="321px"
+>&lt;/p>
+&lt;h2 id="補足ログの確認方法">補足:ログの確認方法
+&lt;/h2>&lt;h3 id="proxyサーバー-squid">Proxyサーバー (squid)
+&lt;/h3>&lt;p>squidのログは&lt;code>access.log&lt;/code>から確認ができます&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ubuntu&lt;/span>&lt;span class="err">@&lt;/span>&lt;span class="n">ubuntu&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">~$&lt;/span> &lt;span class="n">sudo&lt;/span> &lt;span class="n">tail&lt;/span> &lt;span class="o">/&lt;/span>&lt;span class="k">var&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="nb">log&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">squid&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">access&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">log&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.583&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">531&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">WorkspaceSettingService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">GetWorkspaceSetting&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.609&lt;/span> &lt;span class="mi">2&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">605&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">WorkspaceSettingService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">GetWorkspaceSetting&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.617&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">550&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">AuthService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">GetAuthStatus&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.625&lt;/span> &lt;span class="mi">2&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">526&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">UserService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">GetUserSetting&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.715&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">510&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">UserService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">ListShortcuts&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.715&lt;/span> &lt;span class="mi">5&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">510&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">InboxService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">ListInboxes&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.718&lt;/span> &lt;span class="mi">5&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">941&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">MemoService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">ListMemos&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953619.747&lt;/span> &lt;span class="mi">2&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">25371&lt;/span> &lt;span class="n">GET&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">full&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">logo&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">webp&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">image&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">webp&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953620.078&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_MISS&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">200&lt;/span> &lt;span class="mi">526&lt;/span> &lt;span class="n">POST&lt;/span> &lt;span class="n">http&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">UserService&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">GetUserStats&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_DIRECT&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">123.115&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">grpc&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">proto&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1743953690.354&lt;/span> &lt;span class="mi">5007&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.125&lt;/span> &lt;span class="n">TCP_TUNNEL&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">503&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="n">CONNECT&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">443&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">HIER_NONE&lt;/span>&lt;span class="o">/-&lt;/span> &lt;span class="o">-&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="dnsサーバー-unbound">DNSサーバー (unbound)
+&lt;/h3>&lt;p>unboundのログは&lt;code>/var/log/syslog&lt;/code>に保存されます。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ubuntu&lt;/span>&lt;span class="err">@&lt;/span>&lt;span class="n">ubuntu&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">~$&lt;/span> &lt;span class="n">sudo&lt;/span> &lt;span class="n">tail&lt;/span> &lt;span class="o">/&lt;/span>&lt;span class="k">var&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="nb">log&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">syslog&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">grep&lt;/span> &lt;span class="n">unbound&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">33&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">28.423362&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">www&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">google&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">AAAA&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">45.402548&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">A&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">45.403307&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">AAAA&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">50.404939&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">A&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">50.406916&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">AAAA&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">50.407588&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">A&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">50.408005&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">AAAA&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">50.408470&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">A&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">04&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">06&lt;/span>&lt;span class="n">T15&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">34&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">50.408629&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">00&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">00&lt;/span> &lt;span class="n">ubuntu&lt;/span> &lt;span class="n">unbound&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2930&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="n">info&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">192.168&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="mf">122.83&lt;/span> &lt;span class="n">push&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">services&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mozilla&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">AAAA&lt;/span> &lt;span class="n">IN&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>【KVMで自宅インフラ構築】3.Proxyサーバーの構築</title><link>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/</link><pubDate>Fri, 14 Mar 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/</guid><description>&lt;p>前回は仮想ネットワーク上にWebサーバーを構築しました
+今回はProxyサーバーを構築し、管理ネットワークからWebサーバーを閲覧できるようにします&lt;/p>
+&lt;ul>
+&lt;li>1.構成と準備&lt;/li>
+&lt;li>2.Webサーバーの構築&lt;/li>
+&lt;li>3.Proxyサーバーの構築 &amp;lt;- ここ&lt;/li>
+&lt;li>4.DNSサーバーの構築&lt;/li>
+&lt;li>5.Grafanaで監視基盤の構築&lt;/li>
+&lt;/ul>
+&lt;h2 id="ネットワーク構成のイメージ図">ネットワーク構成のイメージ図
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>完成形&lt;/p>
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233329.png"
+width="953"
+height="406"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233329_hu_1c4bba61b3651171.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233329_hu_f4c2d22ae351df69.png 1024w"
+loading="lazy"
+alt="index-20250320233329"
+class="gallery-image"
+data-flex-grow="234"
+data-flex-basis="563px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>今回の内容&lt;/p>
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233244.png"
+width="954"
+height="404"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233244_hu_f77a88489e9cb010.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406233244_hu_67396b06394b9bd2.png 1024w"
+loading="lazy"
+alt="index-20250406233244"
+class="gallery-image"
+data-flex-grow="236"
+data-flex-basis="566px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="仮想マシンのデプロイ">仮想マシンのデプロイ
+&lt;/h2>&lt;p>まずはProxyサーバー用の仮想マシンを作成していきます。
+前回と同じ手順になるので作成や起動の手順は割愛します。(proxy-serverの名前で仮想マシンを作成しました)
+&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234023.png"
+width="3466"
+height="2017"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234023_hu_dcbbd92d79be2785.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234023_hu_2e6ddbee540d9cd3.png 1024w"
+loading="lazy"
+alt="index-20250320234023"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="412px"
+>&lt;/p>
+&lt;p>つづいて、仮想マシンの仮想ネットワーク設定を行っていきます。
+ProxyサーバーはWebサーバーを閲覧するPCが利用する&lt;code>管理ネットワーク&lt;/code>と、Webサーバーが接続される&lt;code>仮想ネットワーク&lt;/code>の両方に足を出している必要があります。
+&lt;code>仮想ネットワーク&lt;/code>にはクローン時点で既に接続されているため、新しくネットワークインターフェースを作成し、&lt;code>管理ネットワーク&lt;/code>に接続します。
+まずは仮想マシンの&lt;code>ネットワークインターフェース&lt;/code>から&lt;code>ネットワークインターフェースの追加&lt;/code>をクリックします
+&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234341.png"
+width="3466"
+height="2017"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234341_hu_73bb6a5b02418011.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234341_hu_adadae0788ce9ded.png 1024w"
+loading="lazy"
+alt="index-20250320234341"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="412px"
+>&lt;/p>
+&lt;p>下記設定で追加します (仮想マシンがパワーオフの状態で実施する)&lt;/p>
+&lt;ul>
+&lt;li>インターフェース形式: Direct attachment&lt;/li>
+&lt;li>ソース: enp1s0 (KVMホストの物理NICを指定します)&lt;/li>
+&lt;li>モデル: virtio&lt;/li>
+&lt;li>MACアドレス: 自動生成&lt;/li>
+&lt;li>永続: ☑常に割り当てる
+&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234636.png"
+width="3466"
+height="2017"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234636_hu_8cb9f6b1e6c0a9b1.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320234636_hu_2b3cad9fa1730a98.png 1024w"
+loading="lazy"
+alt="index-20250320234636"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="412px"
+>&lt;/li>
+&lt;/ul>
+&lt;p>追加が完了すると、Cockpitの画面で追加されていることが確認できます&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320235327.png"
+width="3466"
+height="2017"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320235327_hu_3992fef3f67ed739.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320235327_hu_eb3ee975af591f8f.png 1024w"
+loading="lazy"
+alt="index-20250320235327"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="412px"
+>&lt;/p>
+&lt;p>インターフェースが追加できたので、仮想マシンの方でもネットワークの設定をしてあげます&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo cat /etc/netplan/50-cloud-init.yaml
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># This file is generated from information provided by the datasource. Changes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># to it will not persist across an instance reboot. To disable cloud-init&amp;#39;s
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># network configuration capabilities, write a file
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># network: {config: disabled}
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">network:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ethernets:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> enp0s3:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dhcp4: true
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dhcp-identifier: mac
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> enp0s7:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dhcp4: true
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> version: 2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ sudo netplan apply
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>これで&lt;code>管理ネットワーク&lt;/code>と&lt;code>仮想ネットワーク&lt;/code>の両方に接続された仮想マシンが作成できました&lt;/p>
+&lt;ul>
+&lt;li>管理ネットワーク側IP: 192.168.122.83&lt;/li>
+&lt;li>仮想ネットワーク側IP: 192.168.123.120&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ ip a show enp0s7
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3: enp0s7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> link/ether 52:54:00:87:91:ff brd ff:ff:ff:ff:ff:ff
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet 192.168.122.83/24 metric 100 brd 192.168.122.255 scope global dynamic enp0s7
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft 3465sec preferred_lft 3465sec
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 fe80::5054:ff:fe87:91ff/64 scope link
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ ip a show enp0s3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2: enp0s3: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> link/ether 52:54:00:54:18:43 brd ff:ff:ff:ff:ff:ff
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet 192.168.123.120/24 metric 100 brd 192.168.123.255 scope global dynamic enp0s3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft 3468sec preferred_lft 3468sec
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 fe80::5054:ff:fe54:1843/64 scope link
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="proxyサーバの構築">Proxyサーバの構築
+&lt;/h2>&lt;p>squidを用いてProxyサーバーを構築します。
+まずは、デプロイした仮想マシン上で&lt;code>squid&lt;/code>をインストールします&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo apt install squid
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>インストールが完了したら、設定を行っていきます。
+設定ファイルは&lt;code>/etc/squid/squid.conf&lt;/code>にあります。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo vi /etc/squid/squid.conf
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>ファイルの&lt;code>1400行目&lt;/code>あたりに下記のような記載があるので、&lt;code>Allow_Local_Network&lt;/code>の設定を追記します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl"># Example rule allowing access from your local networks.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Adapt to list your (internal) IP networks from where browsing
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># should be allowed
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src 0.0.0.1-0.255.255.255 # RFC 1122 &amp;#34;this&amp;#34; network (LAN)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src 10.0.0.0/8 # RFC 1918 local private network (LAN)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src 100.64.0.0/10 # RFC 6598 shared address space (CGN)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src 169.254.0.0/16 # RFC 3927 link-local (directly plugged) machines
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src 172.16.0.0/12 # RFC 1918 local private network (LAN)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src 192.168.0.0/16 # RFC 1918 local private network (LAN)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src fc00::/7 # RFC 4193 local private network range
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl localnet src fe80::/10 # RFC 4291 link-local (directly plugged) machines
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">acl Allow_Local_Network src 192.168.123.0/24 # &amp;lt;- ★ この行を追記
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>さらに、&lt;code>1601行目&lt;/code>あたりの下記コメントがある行に二行追記します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zed" data-lang="zed">&lt;span class="line">&lt;span class="cl">&lt;span class="err">#&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">For&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">example&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">to&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">allow&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">access&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">from&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">your&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">networks&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">you&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">may&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">uncomment&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">the&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="err">#&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">following&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">rule&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nn">and/&lt;/span>&lt;span class="n">or&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">add&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">rules&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">that&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">match&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">your&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">definition&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">of&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">&amp;#34;&lt;/span>&lt;span class="n">local&lt;/span>&lt;span class="err">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="err">#&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">http_access&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">allow&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">localnet&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="n">http_access&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">allow&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">localnet&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="n">http_access&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">allow&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Allow_Local_Network&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>上記設定が完了したら、下記コマンドでsquidを再起動します。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ sudo systemctl restart squid
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="proxyサーバーを経由したwebサーバーへのアクセス">Proxyサーバーを経由したWebサーバーへのアクセス
+&lt;/h2>&lt;p>Proxyサーバーの構築が完了したので、これを利用してWebサーバーへのアクセスを行います。
+そのためには、WebサーバーへアクセスするクライアントにてProxyサーバーを利用する設定を行う必要があります。
+今回はUbuntuサーバーを用いるため、以下の手順でProxyサーバーの設定を行います&lt;/p>
+&lt;ul>
+&lt;li>「Settings」→「Network」→「Proxy」
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406170916.png"
+width="2166"
+height="1622"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406170916_hu_11231b669c127677.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406170916_hu_6d4e6c5054becde7.png 1024w"
+loading="lazy"
+alt="index-20250406170916"
+class="gallery-image"
+data-flex-grow="133"
+data-flex-basis="320px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>「Network Proxy」を有効にし、以下設定を入力する
+&lt;ul>
+&lt;li>Configuration: &lt;code>Manual&lt;/code>&lt;/li>
+&lt;li>HTTP Proxy:
+&lt;ul>
+&lt;li>URL: Proxyサーバーの管理用ネットワーク側のIP (&lt;code>192.168.122.83&lt;/code>)&lt;/li>
+&lt;li>Port: ProxyサーバーのPort (&lt;code>3128&lt;/code>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>HTTPS Proxy:
+&lt;ul>
+&lt;li>URL: Proxyサーバーの管理用ネットワーク側のIP (&lt;code>192.168.122.83&lt;/code>)&lt;/li>
+&lt;li>Port: ProxyサーバーのPort (&lt;code>3128&lt;/code>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406171134.png"
+width="2166"
+height="1622"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406171134_hu_f094c79fd8746789.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406171134_hu_29a2da699791a251.png 1024w"
+loading="lazy"
+alt="index-20250406171134"
+class="gallery-image"
+data-flex-grow="133"
+data-flex-basis="320px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>上記設定が完了したら、ブラウザでWebサーバーにアクセスができるようになります！(&lt;code>http://192.168.123.15:5230&lt;/code>)&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406174344.png"
+width="2166"
+height="1622"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406174344_hu_aded65531fb2b261.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406174344_hu_e444c9c41be0f28f.png 1024w"
+loading="lazy"
+alt="index-20250406174344"
+class="gallery-image"
+data-flex-grow="133"
+data-flex-basis="320px"
+>&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406174628.png"
+width="2166"
+height="1622"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406174628_hu_406a6640e7b7c27a.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%893.proxy%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250406174628_hu_7b6365fad1c14a83.png 1024w"
+loading="lazy"
+alt="index-20250406174628"
+class="gallery-image"
+data-flex-grow="133"
+data-flex-basis="320px"
+>&lt;/p>
+&lt;p>以上でsquidを用いたProxyサーバーの構築ができました。
+次は&lt;a class="link" href="" >4.DNSサーバーの構築&lt;/a>でLAでN名前解決ができるようにします&lt;/p></description></item><item><title>【KVMで自宅インフラ構築】2.Webサーバーの構築</title><link>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/</link><pubDate>Wed, 12 Mar 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/</guid><description>&lt;p>前回はこれから作成する環境の構築の紹介とその準備を行いました。
+今回はOSSを用いて簡単なWebサーバーを構築します&lt;/p>
+&lt;ul>
+&lt;li>1.構成と準備&lt;/li>
+&lt;li>2.Webサーバーの構築 &amp;lt;-ここ&lt;/li>
+&lt;li>3.Proxyサーバーの構築&lt;/li>
+&lt;li>4.DNSサーバーの構築&lt;/li>
+&lt;li>5.Grafanaで監視基盤の構築&lt;/li>
+&lt;/ul>
+&lt;h2 id="ネットワーク構成のイメージ図">ネットワーク構成のイメージ図
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>完成形&lt;/p>
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233023.png"
+width="953"
+height="406"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233023_hu_1c4bba61b3651171.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233023_hu_f4c2d22ae351df69.png 1024w"
+loading="lazy"
+alt="index-20250320233023"
+class="gallery-image"
+data-flex-grow="234"
+data-flex-basis="563px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>今回の内容&lt;/p>
+&lt;ul>
+&lt;li>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233222.png"
+width="953"
+height="404"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233222_hu_2deb166db1f04c60.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320233222_hu_b47eb2cee31f4e95.png 1024w"
+loading="lazy"
+alt="index-20250320233222"
+class="gallery-image"
+data-flex-grow="235"
+data-flex-basis="566px"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="webサーバーに利用するoss選び">Webサーバーに利用するOSS選び
+&lt;/h2>&lt;p>このシリーズの目的としてはWebサーバーにこだわる必要はないのですが。。
+せっかくなのでおすすめのOSSをいくつか紹介します&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://usememos.com/" target="_blank" rel="noopener"
+>memos&lt;/a>
+&lt;ul>
+&lt;li>シンプルで軽量な自己ホスト型のメモ管理アプリ&lt;/li>
+&lt;li>マークダウンをサポート&lt;/li>
+&lt;li>Slackのような使い心地のメモ帳&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a class="link" href="https://gitea.io/" target="_blank" rel="noopener"
+>gitea&lt;/a>
+&lt;ul>
+&lt;li>軽量な自己ホスト型Gitサービス&lt;/li>
+&lt;li>GitHubのようなリポジトリ管理をローカル環境で実現できる&lt;/li>
+&lt;li>低リソースで動作するのが特徴&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a class="link" href="https://mattermost.com/" target="_blank" rel="noopener"
+>Mattermost&lt;/a>
+&lt;ul>
+&lt;li>オープンソースのチーム向けチャットプラットフォーム&lt;/li>
+&lt;li>Slackの代替として利用でき、高いカスタマイズ性を持つ&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a class="link" href="https://nextcloud.com/" target="_blank" rel="noopener"
+>Nextcloud&lt;/a>
+&lt;ul>
+&lt;li>自己ホスト型のクラウドストレージサービス&lt;/li>
+&lt;li>DropboxやGoogle Driveの代替として利用できる&lt;/li>
+&lt;li>ファイル共有やコラボレーション機能が充実&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a class="link" href="https://immich.app/" target="_blank" rel="noopener"
+>Immich&lt;/a>
+&lt;ul>
+&lt;li>オープンソースの自己ホスト型写真・動画管理システム&lt;/li>
+&lt;li>Google Photosの代替として利用できる&lt;/li>
+&lt;li>AIによる画像認識や自動バックアップ機能をもつ&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>今回は&lt;code>memos&lt;/code>を使ってWebサーバーを構築します&lt;/p>
+&lt;h2 id="仮想マシンのデプロイ">仮想マシンのデプロイ
+&lt;/h2>&lt;p>それではWebサーバー用の仮想マシンを作成していきます。
+まずは&lt;code>仮想マシンの準備&lt;/code>で作成した仮想マシンをクローンして新しい仮想マシンを作成します&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225149.png"
+width="3454"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225149_hu_f67782767d4f0f96.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225149_hu_13c5202bdee9dd33.png 1024w"
+loading="lazy"
+alt="index-20250320225149"
+class="gallery-image"
+data-flex-grow="170"
+data-flex-basis="409px"
+>&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225209.png"
+width="3454"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225209_hu_854332f7cb9ac918.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225209_hu_83c744800647fd6d.png 1024w"
+loading="lazy"
+alt="index-20250320225209"
+class="gallery-image"
+data-flex-grow="170"
+data-flex-basis="409px"
+>&lt;/p>
+&lt;p>作成が完了したら、仮想マシンが仮想ネットワーク&lt;code>default&lt;/code>に接続されていることを確認します&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320231703.png"
+width="3466"
+height="2017"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320231703_hu_7cdcf17b4358b142.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320231703_hu_8e4083b14f9a26de.png 1024w"
+loading="lazy"
+alt="index-20250320231703"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="412px"
+>&lt;/p>
+&lt;p>ネットワークの確認ができたら&lt;code>実行&lt;/code>をクリックして仮想マシンを起動します&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225254.png"
+width="3454"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225254_hu_c4e9371896b6c76.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225254_hu_2b881d8de05d703e.png 1024w"
+loading="lazy"
+alt="index-20250320225254"
+class="gallery-image"
+data-flex-grow="170"
+data-flex-basis="409px"
+>&lt;/p>
+&lt;p>起動が完了したら仮想マシンの画面からコンソールに入ることができます
+(SSHでログインしたい場合は &lt;code>KVMホスト -&amp;gt; 作成した仮想マシン&lt;/code>で接続してください)&lt;/p>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225349.png"
+width="3454"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225349_hu_53fbed3827297f06.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%892.web%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E6%A7%8B%E7%AF%89/uploads/index-20250320225349_hu_799c51b62a8d3829.png 1024w"
+loading="lazy"
+alt="index-20250320225349"
+class="gallery-image"
+data-flex-grow="170"
+data-flex-basis="409px"
+>&lt;/p>
+&lt;h2 id="webサーバーの起動">Webサーバーの起動
+&lt;/h2>&lt;p>デプロイは&lt;a class="link" href="https://www.usememos.com/docs/install/container-install" target="_blank" rel="noopener"
+>公式ドキュメント&lt;/a>に沿ってDockerを使って行います。
+下記dockerコマンドを実行するだけで完了です&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">sudo&lt;/span> &lt;span class="n">docker&lt;/span> &lt;span class="n">run&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="n">d&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">--&lt;/span>&lt;span class="n">init&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">--&lt;/span>&lt;span class="n">name&lt;/span> &lt;span class="n">memos&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">--&lt;/span>&lt;span class="n">publish&lt;/span> &lt;span class="mi">5230&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">5230&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">--&lt;/span>&lt;span class="n">volume&lt;/span> &lt;span class="o">~/.&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="k">var&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">opt&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span> \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">neosmemo&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">memos&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">stable&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>まだブラウザから確認ができないため、curlコマンドでWebサーバーが動作しているか確認します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ curl -I 0.0.0.0:5230
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">HTTP/1.1 200 OK
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Accept-Ranges: bytes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Content-Length: 2784
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Content-Type: text/html; charset=utf-8
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Date: Thu, 20 Mar 2025 14:20:13 GMT~$ curl -I 0.0.0.0:5230
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>確認できました。これでWebサーバーの準備は完了です！
+次は&lt;a class="link" href="" >3.Proxyサーバーの構築&lt;/a>でProxy経由でWebサーバーにアクセスできるようにします&lt;/p></description></item><item><title>【KVMで自宅インフラ構築】1.構成と準備</title><link>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/</link><pubDate>Mon, 10 Mar 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/</guid><description>&lt;p>自宅でKVMを使ったシンプルなインフラ環境を構築します
+Proxyサーバーを介してWebサーバーへ接続し、さらにDNSで名前解決をできるようにします
+最終的にgrafanaで各サーバーの監視設定を行うところまでをやろうと思います&lt;/p>
+&lt;h2 id="構築の流れ">構築の流れ
+&lt;/h2>&lt;ul>
+&lt;li>1.構成と準備 &amp;lt;-ここ&lt;/li>
+&lt;li>2.Webサーバーの構築&lt;/li>
+&lt;li>3.Proxyサーバーの構築&lt;/li>
+&lt;li>4.DNSサーバーの構築&lt;/li>
+&lt;li>5.Grafanaで監視基盤の構築&lt;/li>
+&lt;/ul>
+&lt;h2 id="ネットワーク構成のイメージ図">ネットワーク構成のイメージ図
+&lt;/h2>&lt;p>扱うネットワークは以下の２つです&lt;/p>
+&lt;ul>
+&lt;li>管理用ネットワーク: 192.168.122.0/24
+&lt;ul>
+&lt;li>Webサーバーを利用するクライアントが接続されているネットワーク&lt;/li>
+&lt;li>このネットワークからProxyを介してWebサーバーにアクセスします&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>KVMの仮想ネットワーク: 192.168.123.0/24
+&lt;ul>
+&lt;li>Webサーバーが接続されるローカルネットワーク&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320233029.png"
+width="953"
+height="406"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320233029_hu_1c4bba61b3651171.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320233029_hu_f4c2d22ae351df69.png 1024w"
+loading="lazy"
+alt="index-20250320233029"
+class="gallery-image"
+data-flex-grow="234"
+data-flex-basis="563px"
+>&lt;/p>
+&lt;h2 id="利用するソフトウェア">利用するソフトウェア
+&lt;/h2>&lt;p>仮想マシンの作成やネットワークの設定には&lt;a class="link" href="https://www.redhat.com/en/blog/manage-virtual-machines-cockpit" target="_blank" rel="noopener"
+>Cockpit&lt;/a>を使用します&lt;/p>
+&lt;h2 id="kvmホストの構成">KVMホストの構成
+&lt;/h2>&lt;p>本シリーズ用に物理のホストを用意できなかったため、Nested KVM構成で行います&lt;/p>
+&lt;ul>
+&lt;li>CPU: 4vCPU&lt;/li>
+&lt;li>メモリ: 16GB&lt;/li>
+&lt;li>ストレージ: 100GB&lt;/li>
+&lt;li>OS: Ubuntu 24.04&lt;/li>
+&lt;/ul>
+&lt;h2 id="ネットワーク構成">ネットワーク構成
+&lt;/h2>&lt;p>仮想ネットワークには、デフォルトで作成される&lt;code>default&lt;/code>を使用します&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ virsh net-list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Name State Autostart Persistent
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">--------------------------------------------
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> default active yes yes
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>この仮想ネットワークの詳細は&lt;code>net-dumpxml&lt;/code>で確認することができ、以下の通りです&lt;/p>
+&lt;ul>
+&lt;li>NATモード で動作し、仮想マシンが外部ネットワークへアクセス可能&lt;/li>
+&lt;li>仮想ブリッジvirbr0を使用して通信を管理&lt;/li>
+&lt;li>ホストのIP (192.168.123.1) がゲートウェイとして機能&lt;/li>
+&lt;li>DHCP により、 192.168.123.2 〜 192.168.123.254 の範囲でIPアドレスを自動割り当て&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ virsh net-dumpxml default
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;network&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;name&amp;gt;default&amp;lt;/name&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;uuid&amp;gt;61c20183-757b-402f-a92e-677072b910d0&amp;lt;/uuid&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;forward mode=&amp;#39;nat&amp;#39;&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;nat&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;port start=&amp;#39;1024&amp;#39; end=&amp;#39;65535&amp;#39;/&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;/nat&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;/forward&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;bridge name=&amp;#39;virbr0&amp;#39; stp=&amp;#39;on&amp;#39; delay=&amp;#39;0&amp;#39;/&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;mac address=&amp;#39;52:54:00:a3:31:ff&amp;#39;/&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;ip address=&amp;#39;192.168.123.1&amp;#39; netmask=&amp;#39;255.255.255.0&amp;#39;&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;dhcp&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;range start=&amp;#39;192.168.123.2&amp;#39; end=&amp;#39;192.168.123.254&amp;#39;/&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;/dhcp&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &amp;lt;/ip&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;/network&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="仮想マシンの準備">仮想マシンの準備
+&lt;/h2>&lt;p>今回は合計で4つの仮想マシンを構築します。
+都度一から作成するのは面倒なのでテンプレートを作成し、それをクローンする形で使用します
+スペックは以下の通りです。&lt;/p>
+&lt;ul>
+&lt;li>CPU: 2vCPU&lt;/li>
+&lt;li>メモリ: 4GB&lt;/li>
+&lt;li>ストレージ: 20GB&lt;/li>
+&lt;li>OS: Ubuntu 24.04&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320231522.png"
+width="3454"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320231522_hu_805fe2b457cb5a1d.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320231522_hu_37965c2a97ef37c2.png 1024w"
+loading="lazy"
+alt="index-20250320231522"
+class="gallery-image"
+data-flex-grow="170"
+data-flex-basis="409px"
+>
+&lt;img src="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320231534.png"
+width="3454"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320231534_hu_40396ece34876596.png 480w, http://192.168.122.81/p/kvm%E3%81%A7%E8%87%AA%E5%AE%85%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E6%A7%8B%E7%AF%891.%E6%A7%8B%E6%88%90%E3%81%A8%E6%BA%96%E5%82%99/uploads/index-20250320231534_hu_736b8bf654f84970.png 1024w"
+loading="lazy"
+alt="index-20250320231534"
+class="gallery-image"
+data-flex-grow="170"
+data-flex-basis="409px"
+>&lt;/p>
+&lt;p>また、クローンした仮想マシンにDHCPから異なるIPが割り当てるよう、以下設定を追記しておきます (&lt;a class="link" href="https://qiita.com/sandopan65/items/75ca7e6563e86a7dfd8c" target="_blank" rel="noopener"
+>参考&lt;/a>)&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">network:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ethernets:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> enp1s0:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dhcp4: true
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dhcp-identifier: mac # この行を追記
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> version: 2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>これで準備が整いました。次回は&lt;a class="link" href="" >2.Webサーバーの構築&lt;/a>を進めていきます&lt;/p></description></item></channel></rss>
