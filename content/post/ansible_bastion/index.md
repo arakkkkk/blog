@@ -22,11 +22,13 @@ ansible_ssh_common_args: '-o ProxyCommand="ssh -i {{ bastion_ssh_private_key_fil
 
 以下の構成で、対象サーバーへ踏み台サーバー経由でAnsibleを実行します。
 
-```mermaid
-graph LR
-    A[ローカルマシン<br/>Ansible実行サーバー] -->|SSH:2222<br>公開鍵認証| B[踏み台サーバー<br/>192.168.11.10]
-    B -->|SSH:2222<br>公開鍵認証/パスワード認証| C[対象サーバー<br/>192.168.122.70]
-```
+![struc](uploads/mermaid-diagram-1753458334769.png)
+
+<!-- ```mermaid -->
+<!-- graph LR -->
+<!--     A[ローカルマシン<br/>Ansible実行サーバー] -->|SSH:2222<br>公開鍵認証| B[踏み台サーバー<br/>192.168.11.10] -->
+<!--     B -->|SSH:2222<br>公開鍵認証/パスワード認証| C[対象サーバー<br/>192.168.122.70] -->
+<!-- ``` -->
 
 ## 前提条件
 
