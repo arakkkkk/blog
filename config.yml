@@ -1,0 +1,11 @@
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    style: github
+    lineNos: true
+
+params:
+  mermaid:
+    enable: true
