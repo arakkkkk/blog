@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Docker on arakkk</title><link>http://192.168.122.81/tags/docker/</link><description>Recent content in Docker on arakkk</description><generator>Hugo -- gohugo.io</generator><language>ja-JP</language><lastBuildDate>Fri, 07 Nov 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://192.168.122.81/tags/docker/index.xml" rel="self" type="application/rss+xml"/><item><title>Dockerでサクッと始めるローカルLLM(Ollama + Open WebUI)</title><link>http://192.168.122.81/p/docker%E3%81%A7%E3%82%B5%E3%82%AF%E3%83%83%E3%81%A8%E5%A7%8B%E3%82%81%E3%82%8B%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%ABllmollama--open-webui/</link><pubDate>Fri, 07 Nov 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/docker%E3%81%A7%E3%82%B5%E3%82%AF%E3%83%83%E3%81%A8%E5%A7%8B%E3%82%81%E3%82%8B%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%ABllmollama--open-webui/</guid><description>&lt;h1 id="dockerでローカルllmを始めるollama--open-webui"&gt;DockerでローカルLLMを始める（Ollama + Open WebUI）
+&lt;/h1&gt;&lt;p&gt;ローカルでLLMを試すための最小構成をDocker Composeで用意しました。ブラウザ（Open WebUI）からの利用と、OllamaのAPIの基本的な呼び出し方を簡単にまとめています。&lt;/p&gt;
+&lt;p&gt;対象リポジトリ: practice-llm-mcp（Composeと初期化スクリプトを同梱）&lt;/p&gt;
+&lt;h2 id="クイックスタート"&gt;クイックスタート
+&lt;/h2&gt;&lt;p&gt;前提条件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Docker と Docker Compose が導入済み&lt;/li&gt;
+&lt;li&gt;初回のみモデルのダウンロードが発生（ネットワーク接続が必要）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;リポジトリ取得&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/arakkkkk/practice-llm-mcp.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; practice-llm-mcp
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="2"&gt;
+&lt;li&gt;コンテナ起動&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 環境によっては sudo が必要です&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker compose up -d
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Makefile を使う場合&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make run
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="3"&gt;
+&lt;li&gt;動作確認（ブラウザ / API）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;ブラウザ: http://localhost:8080 へアクセス&lt;/li&gt;
+&lt;li&gt;API: &lt;code&gt;curl&lt;/code&gt; で確認&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl http://localhost:11434/api/generate -d &lt;span class="s1"&gt;&amp;#39;{
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;model&amp;#34;: &amp;#34;qwen:7b-chat&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;prompt&amp;#34;: &amp;#34;明日のやることを3つ箇条書きで&amp;#34;,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;stream&amp;#34;: false
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt;}&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;停止する場合:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker compose down
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# または&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make down
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="コンポーネント概要ollama--open-webui"&gt;コンポーネント概要（Ollama / Open WebUI）
+&lt;/h2&gt;&lt;h3 id="ollama"&gt;Ollama
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;役割: ローカルでLLMモデルを実行するエンジン（HTTP 11434 でAPI提供）&lt;/li&gt;
+&lt;li&gt;取得: &lt;code&gt;ollama pull &amp;lt;model&amp;gt;&lt;/code&gt; でモデルをダウンロード&lt;/li&gt;
+&lt;li&gt;保存: 本構成では &lt;code&gt;./ollama/data&lt;/code&gt; に永続化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="open-webui"&gt;Open WebUI
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;役割: ブラウザからOllamaを利用するためのUI&lt;/li&gt;
+&lt;li&gt;接続: &lt;code&gt;OLLAMA_BASE_URL&lt;/code&gt; で Ollama に接続（Composeでは &lt;code&gt;http://ollama:11434&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;アクセス: http://localhost:8080&lt;/li&gt;
+&lt;li&gt;保存: 会話履歴等は &lt;code&gt;./webui/data&lt;/code&gt; に保存&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="構成のポイント"&gt;構成のポイント
+&lt;/h2&gt;&lt;h3 id="1-docker-compose"&gt;1) docker compose
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;compose.yml&lt;/code&gt; では以下の2サービスを定義しています。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;ollama&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ポート &lt;code&gt;11434&lt;/code&gt; を公開（API）&lt;/li&gt;
+&lt;li&gt;モデルを &lt;code&gt;./ollama/data&lt;/code&gt; に永続化&lt;/li&gt;
+&lt;li&gt;起動後の初期化でモデルを準備（&lt;code&gt;init.sh&lt;/code&gt;）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;open-webui&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ポート &lt;code&gt;8080&lt;/code&gt; でWeb UIを提供&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;OLLAMA_BASE_URL=http://ollama:11434&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;depends_on: [ollama]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-ollamaの初期化"&gt;2) Ollamaの初期化
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;ollama/init.sh&lt;/code&gt; で、Ollamaの待ち受け開始を確認した後にモデルをまとめて取得します（初回のみ時間がかかります）。取得対象の例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;phi3:mini&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;llama3:8b&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;qwen:7b-chat&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mistral&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;埋め込み用途: &lt;code&gt;gte-small&lt;/code&gt;, &lt;code&gt;e5-small-v2&lt;/code&gt;, &lt;code&gt;nomic-embed-text&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;不要なモデルがある場合は、&lt;code&gt;init.sh&lt;/code&gt; の &lt;code&gt;ollama pull&lt;/code&gt; 行を調整してください。
+利用可能なモデルは&lt;a class="link" href="https://ollama.com/library?" target="_blank" rel="noopener"
+&gt;library&lt;/a&gt;を参考にしてください。&lt;/p&gt;
+&lt;h3 id="3-makefile"&gt;3) Makefile
+&lt;/h3&gt;&lt;p&gt;基本操作のショートカットです。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;make run&lt;/code&gt; … 起動（&lt;code&gt;docker compose up -d&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make down&lt;/code&gt; … 停止&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make logs&lt;/code&gt; … ログ確認&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make restart&lt;/code&gt; … 再ビルド＋再起動&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="補足メモ"&gt;補足メモ
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;ポート&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;11434&lt;/code&gt;: Ollama HTTP API（&lt;code&gt;/api/chat&lt;/code&gt; と &lt;code&gt;/api/generate&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;8080&lt;/code&gt;: Open WebUI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;永続化&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;モデルは容量が大きいため、&lt;code&gt;./ollama/data&lt;/code&gt; に保存して再ダウンロードを避けます&lt;/li&gt;
+&lt;li&gt;WebUI のデータは &lt;code&gt;./webui/data&lt;/code&gt; に保存します&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;起動順制御&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;depends_on&lt;/code&gt; に加えて &lt;code&gt;init.sh&lt;/code&gt; で疎通確認を行います&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;モデル選定&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;まずは軽量な &lt;code&gt;phi3:mini&lt;/code&gt; で確認 → &lt;code&gt;qwen:7b-chat&lt;/code&gt; や &lt;code&gt;llama3:8b&lt;/code&gt; へ拡張&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="よくあるハマりどころ"&gt;よくあるハマりどころ
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;初回起動が長い&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;モデルのダウンロード時間がかかります。&lt;code&gt;make logs&lt;/code&gt; で進捗を確認してください&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ポート競合&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;compose.yml&lt;/code&gt; のポートマッピング（例: &lt;code&gt;11434:11434&lt;/code&gt;）の左側を空いている番号に変更します&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;WebUIは開けるが応答がない&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;open-webui&lt;/code&gt; の &lt;code&gt;OLLAMA_BASE_URL&lt;/code&gt; が &lt;code&gt;http://ollama:11434&lt;/code&gt; か、&lt;code&gt;ollama&lt;/code&gt; コンテナが起動しているかを確認します&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;権限エラー&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;sudo&lt;/code&gt; を付けるか、ユーザーを &lt;code&gt;docker&lt;/code&gt; グループへ追加します&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="まとめ"&gt;まとめ
+&lt;/h2&gt;&lt;p&gt;以下の手順でローカルLLM環境を用意できます。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;docker compose up -d&lt;/code&gt;（または &lt;code&gt;make run&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;ブラウザは http://localhost:8080、API は http://localhost:11434&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;必要に応じて取得するモデルやポート番号を調整しながら、用途に合わせて拡張してください。&lt;/p&gt;</description></item></channel></rss>

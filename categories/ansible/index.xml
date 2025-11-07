@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ansible on arakkk</title><link>http://192.168.122.81/categories/ansible/</link><description>Recent content in Ansible on arakkk</description><generator>Hugo -- gohugo.io</generator><language>ja-JP</language><lastBuildDate>Fri, 25 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://192.168.122.81/categories/ansible/index.xml" rel="self" type="application/rss+xml"/><item><title>踏み台サーバー経由でのAnsible実行</title><link>http://192.168.122.81/p/%E8%B8%8F%E3%81%BF%E5%8F%B0%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E7%B5%8C%E7%94%B1%E3%81%A7%E3%81%AEansible%E5%AE%9F%E8%A1%8C/</link><pubDate>Fri, 25 Jul 2025 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/%E8%B8%8F%E3%81%BF%E5%8F%B0%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E7%B5%8C%E7%94%B1%E3%81%A7%E3%81%AEansible%E5%AE%9F%E8%A1%8C/</guid><description>&lt;p&gt;踏み台サーバー経由でAnsibleを実行する方法について、少し詰まったので備忘録&lt;/p&gt;
+&lt;h2 id="結論"&gt;結論
+&lt;/h2&gt;&lt;p&gt;踏み台サーバーを使った多段SSHの設定として以下のパラメータを設定することで可能となります&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ansible_ssh_common_args: &amp;#39;-o ProxyCommand=&amp;#34;ssh -i {{ bastion_ssh_private_key_file }} -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }} -W %h:%p&amp;#34;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;サンプル: &lt;a class="link" href="https://github.com/arakkkkk/example-ansible-proxyjump" target="_blank" rel="noopener"
+&gt;arakkkkk/example-ansible-proxyjump&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="構成"&gt;構成
+&lt;/h2&gt;&lt;p&gt;以下の構成で、対象サーバーへ踏み台サーバー経由でAnsibleを実行します。&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/%E8%B8%8F%E3%81%BF%E5%8F%B0%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E7%B5%8C%E7%94%B1%E3%81%A7%E3%81%AEansible%E5%AE%9F%E8%A1%8C/uploads/mermaid-diagram-1753458334769.png"
+width="1953"
+height="188"
+srcset="http://192.168.122.81/p/%E8%B8%8F%E3%81%BF%E5%8F%B0%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E7%B5%8C%E7%94%B1%E3%81%A7%E3%81%AEansible%E5%AE%9F%E8%A1%8C/uploads/mermaid-diagram-1753458334769_hu_a6fe29ac4af0237d.png 480w, http://192.168.122.81/p/%E8%B8%8F%E3%81%BF%E5%8F%B0%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E7%B5%8C%E7%94%B1%E3%81%A7%E3%81%AEansible%E5%AE%9F%E8%A1%8C/uploads/mermaid-diagram-1753458334769_hu_489a9590f98a9bee.png 1024w"
+loading="lazy"
+alt="struc"
+class="gallery-image"
+data-flex-grow="1038"
+data-flex-basis="2493px"
+&gt;&lt;/p&gt;
+&lt;!-- ```mermaid --&gt;
+&lt;!-- graph LR --&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- A[ローカルマシン&amp;lt;br/&amp;gt;Ansible実行サーバー] --&amp;gt;|SSH:2222&amp;lt;br&amp;gt;公開鍵認証| B[踏み台サーバー&amp;lt;br/&amp;gt;192.168.11.10] --&amp;gt;
+&amp;lt;!-- B --&amp;gt;|SSH:2222&amp;lt;br&amp;gt;公開鍵認証/パスワード認証| C[対象サーバー&amp;lt;br/&amp;gt;192.168.122.70] --&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;!-- ``` --&gt;
+&lt;h2 id="前提条件"&gt;前提条件
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;踏み台サーバーと対象サーバーの両方でSSH公開鍵認証が設定済み&lt;/li&gt;
+&lt;li&gt;両サーバーともSSHポート2222で接続&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="hosts設定-踏み台サーバー対象サーバー共に公開鍵認証"&gt;hosts設定 (踏み台サーバー/対象サーバー共に公開鍵認証)
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;hosts&lt;/code&gt;ファイルに以下の設定を記述&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;ansible-client ansible_host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;192.168.122.70 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/keys/id_ed25519 ansible_ssh_common_args=&amp;#39;-o ProxyCommand=&amp;#34;ssh -i ~/.ssh/keys/id_ed25519 -p 2222 ubuntu@192.168.11.10 -W %h:%p&amp;#34;&amp;#39; ansible_port=2222&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/arakkkkk/example-ansible-proxyjump/blob/main/host_vars/ansible-client.yml" target="_blank" rel="noopener"
+&gt;ansible-client.yml&lt;/a&gt;のようにhost_varsのymlに記載すると管理しやすいかと思います&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ansible_host&lt;/code&gt;: 対象サーバーのIPアドレス&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ansible_user&lt;/code&gt;: 対象サーバーのSSH接続ユーザー&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ansible_ssh_private_key_file&lt;/code&gt;: 秘密鍵ファイルのパス&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ansible_port&lt;/code&gt;: 対象サーバーのSSHポート&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ansible_ssh_common_args&lt;/code&gt;: SSH接続時の追加オプション (踏み台へのSSH接続情報)
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ProxyCommand&lt;/code&gt;: 踏み台サーバー経由での接続コマンド&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-W %h:%p&lt;/code&gt;: ポートフォワーディング設定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="hosts設定-踏み台サーバーは公開鍵認証対象サーバーはパスワード認証"&gt;hosts設定 (踏み台サーバーは公開鍵認証、対象サーバーはパスワード認証)
+&lt;/h2&gt;&lt;p&gt;踏み台サーバーには証明書認証、対象サーバーにはパスワード認証という場合でもAnsibleによる実行は可能です。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ansible_ssh_private_key_file&lt;/code&gt;パラメータを削除し、実行時に&lt;code&gt;--ask-pass&lt;/code&gt;をつけて実行時にパスワードを入力して実行が可能です。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;ansible-client ansible_host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;192.168.122.70 ansible_user=ubuntu ansible_ssh_common_args=&amp;#39;-o ProxyCommand=&amp;#34;ssh -i ~/.ssh/keys/id_ed25519 -p 2222 ubuntu@192.168.11.10 -W %h:%p&amp;#34;&amp;#39; ansible_port=2222&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Ansible Vault等でパスワードを保存している場合、&lt;code&gt;ansible_ssh_pass&lt;/code&gt;パラメータとして用意しておくことも可能です&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;ansible-client ansible_host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;192.168.122.70 ansible_user=ubuntu ansible_ssh_common_args=&amp;#39;-o ProxyCommand=&amp;#34;ssh -i ~/.ssh/keys/id_ed25519 -p 2222 ubuntu@192.168.11.10 -W %h:%p&amp;#34;&amp;#39; ansible_ssh_pass={{ vault_bastion_pass }} ansible_port=2222&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;※ただし、上記方式での実行には&lt;code&gt;sshpass&lt;/code&gt;のインストールが必要です&lt;/p&gt;</description></item></channel></rss>

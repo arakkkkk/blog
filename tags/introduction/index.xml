@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Introduction on arakkk</title><link>http://192.168.122.81/tags/introduction/</link><description>Recent content in Introduction on arakkk</description><generator>Hugo -- gohugo.io</generator><language>ja-JP</language><lastBuildDate>Wed, 18 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://192.168.122.81/tags/introduction/index.xml" rel="self" type="application/rss+xml"/><item><title>【KVMの仮想化入門⑤】仮想ネットワークの種類と接続方法</title><link>http://192.168.122.81/post_archived/kvm-network1/</link><pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate><guid>http://192.168.122.81/post_archived/kvm-network1/</guid><description>&lt;p&gt;前回はcockpitで仮想マシンを作成する方法を紹介しました。&lt;/p&gt;
+&lt;h2 id="設定概要"&gt;設定概要
+&lt;/h2&gt;&lt;h3 id="vmのネットワークの種類"&gt;VMのネットワークの種類
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="仮想ネットワーク"&gt;仮想ネットワーク
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh net-dumpxml default
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;network&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;name&amp;gt;default&amp;lt;/name&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;uuid&amp;gt;61c20183-757b-402f-a92e-677072b910d0&amp;lt;/uuid&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;forward mode=&amp;#39;nat&amp;#39;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;nat&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;port start=&amp;#39;1024&amp;#39; end=&amp;#39;65535&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;/nat&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;/forward&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;bridge name=&amp;#39;virbr0&amp;#39; stp=&amp;#39;on&amp;#39; delay=&amp;#39;0&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;mac address=&amp;#39;52:54:00:a3:31:ff&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;ip address=&amp;#39;192.168.123.1&amp;#39; netmask=&amp;#39;255.255.255.0&amp;#39;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;dhcp&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;range start=&amp;#39;192.168.123.2&amp;#39; end=&amp;#39;192.168.123.254&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;/dhcp&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;/ip&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;/network&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="仮想nic"&gt;仮想NIC
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;interface type=&amp;#39;network&amp;#39;&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;mac address=&amp;#39;52:54:00:77:59:98&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;source network=&amp;#39;default&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;model type=&amp;#39;rtl8139&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;address type=&amp;#39;pci&amp;#39; domain=&amp;#39;0x0000&amp;#39; bus=&amp;#39;0x00&amp;#39; slot=&amp;#39;0x03&amp;#39; function=&amp;#39;0x0&amp;#39;/&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &amp;lt;/interface&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>【KVMの仮想化入門④】cockpitでVMを構築してみる</title><link>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</link><pubDate>Tue, 17 Dec 2024 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</guid><description>&lt;p&gt;前回はcockpitでWebブラウザからVMを確認するところまでを実施しました。今回はcockpitからVMを構築してみようと思います。&lt;/p&gt;
+&lt;h2 id="ネットワークの作成"&gt;ネットワークの作成
+&lt;/h2&gt;&lt;p&gt;前回作成したubuntu001は、デフォルトで作成されていたネットワーク(&lt;code&gt;default&lt;/code&gt;)にアタッチしました。&lt;br&gt;
+今回は新しくネットワークを作成し、そこにアタッチする形にしようと思います&lt;/p&gt;
+&lt;p&gt;cockpitの仮想マシンタブから&lt;code&gt;1個のネットワーク&lt;/code&gt;をクリックします&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms.png"
+width="3840"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms_hu_c71fd4c51a1e7824.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms_hu_44c3cea3e7c14947.png 1024w"
+loading="lazy"
+alt="cockpit_vms"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+&gt;&lt;/p&gt;
+&lt;p&gt;上の画像のようにdefaultネットワークの情報が確認できました&lt;br&gt;
+&lt;code&gt;仮想ネットワークの作成&lt;/code&gt;よりネットワークを作成します&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_nws1.png"
+width="3840"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_nws1_hu_f35b83a5bd6716ba.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_nws1_hu_92999560b16ceeb4.png 1024w"
+loading="lazy"
+alt="cockpit_nws1"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+&gt;&lt;/p&gt;
+&lt;p&gt;設定は以下を入力し、作成ボタンをクリックします&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;名前: test_network001&lt;/li&gt;
+&lt;li&gt;フォワードモード: NAT (NATを使用してグローバルに出ることができる設定)&lt;/li&gt;
+&lt;li&gt;デバイス: virbr0 (virbr0を設定しておくと新規でブリッジ&lt;code&gt;virbr1&lt;/code&gt;が作成され、利用されます)&lt;/li&gt;
+&lt;li&gt;IP設定: IPv4のみ
+&lt;ul&gt;
+&lt;li&gt;IPv4 アドレス: 192.168.100.1&lt;/li&gt;
+&lt;li&gt;マスクまたはプレフィックス長: 24&lt;/li&gt;
+&lt;li&gt;DHCPの範囲を設定します: ☑&lt;/li&gt;
+&lt;li&gt;開始: 192.168.100.2 / 末尾: 192.168.100.254&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newnw.png"
+width="1940"
+height="1491"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newnw_hu_5c51fd999e4bafb3.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newnw_hu_8a7789df27683094.png 1024w"
+loading="lazy"
+alt="cockpit_newnw"
+class="gallery-image"
+data-flex-grow="130"
+data-flex-basis="312px"
+&gt;&lt;/p&gt;
+&lt;p&gt;新しく&lt;code&gt;test_network001&lt;/code&gt;のネットワークが作成されたことが確認できます&lt;br&gt;
+また、デバイスに&lt;code&gt;virbr0&lt;/code&gt;を指定して作成しましたが、自動的に新しいブリッジ&lt;code&gt;virbt1&lt;/code&gt;が作成され、デバイスに指定されていることが確認できます&lt;br&gt;
+&lt;code&gt;有効化&lt;/code&gt;をクリックすることで、このネットワークが利用可能になります。ホスト起動時に自動的に起動されるよう&lt;code&gt;自動起動&lt;/code&gt;を有効にしておきましょう&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newnw_check.png"
+width="3840"
+height="2016"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newnw_check_hu_58bd8fc9b5771678.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newnw_check_hu_d60f0e8847a807c2.png 1024w"
+loading="lazy"
+alt="cockpit_newnw_check"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="457px"
+&gt;&lt;/p&gt;
+&lt;h2 id="vmの構築"&gt;VMの構築
+&lt;/h2&gt;&lt;p&gt;それではいよいよ仮想マシンの作成をしてみようと思います&lt;/p&gt;
+&lt;p&gt;cockpitの仮想マシンから、仮想マシンの作成をクリックします&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms2.png"
+width="3840"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms2_hu_4df0ba850664d1f6.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms2_hu_e02d6c0a3012d62f.png 1024w"
+loading="lazy"
+alt="cockpit_vms2"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+&gt;&lt;/p&gt;
+&lt;p&gt;表示される作成画面に、以下情報を入力し、&lt;code&gt;作成して実行する&lt;/code&gt;をクリックしましょう&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;接続: System&lt;/li&gt;
+&lt;li&gt;インストールタイプ: ローカルインストールメディア&lt;/li&gt;
+&lt;li&gt;インストールソース: /iso/ubuntu-24.04.1-live-server-amd64.iso&lt;/li&gt;
+&lt;li&gt;オペレーティングシステム: Ubuntu 24.04 LTS (Noble Numbat)&lt;/li&gt;
+&lt;li&gt;ストレージ: qcow2ボリュームの新規作成&lt;/li&gt;
+&lt;li&gt;ストレージの制限: 20GB&lt;/li&gt;
+&lt;li&gt;メモリ: 4GB&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm.png"
+width="3840"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm_hu_277a0c7155182cce.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm_hu_9cfe697a8fba390c.png 1024w"
+loading="lazy"
+alt="cockpit_newvm"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+&gt;&lt;/p&gt;
+&lt;p&gt;作成してまもなく仮想マシンの一覧に追加され、状態が &lt;code&gt;Runnningになっていることが確認できます&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms3.png"
+width="3840"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms3_hu_f49d50e955a0728e.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms3_hu_602f6328022bcb1c.png 1024w"
+loading="lazy"
+alt="cockpit_vms3"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+&gt;&lt;/p&gt;
+&lt;p&gt;作成したubuntu002を開いてみると、VMの情報と共に画面右側のコンソールではUbuntuのインストールが始まっていることが確認できます&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm2.png"
+width="3840"
+height="2024"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm2_hu_90bf0dce14ddd81b.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm2_hu_113aed4e27233d2a.png 1024w"
+loading="lazy"
+alt="cockpit_newvm2"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+&gt;&lt;/p&gt;
+&lt;p&gt;ディスクとネットワークの設定は以下図のようになっています。&lt;br&gt;
+ディスクはメインで使用するdiskと、OSをインストールするためのcdromがアタッチされています&lt;br&gt;
+ネットワークをみると&lt;code&gt;default&lt;/code&gt;のネットワークがアタッチされていることがわかります。新しく作成したネットワークにしたいので、変更をしてみましょう&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm3.png"
+width="3305"
+height="898"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm3_hu_99064d9a808b1f93.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_newvm3_hu_6bd1ce7ae74e2ac0.png 1024w"
+loading="lazy"
+alt="cockpit_newvm3"
+class="gallery-image"
+data-flex-grow="368"
+data-flex-basis="883px"
+&gt;&lt;/p&gt;
+&lt;p&gt;ネットワークの編集ボタンをクリックし、開かれる画面から&lt;code&gt;ソース&lt;/code&gt;を&lt;code&gt;test_network001&lt;/code&gt;に変更します&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_change_nw.png"
+width="1926"
+height="943"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_change_nw_hu_4c0bc9056da2e23.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_change_nw_hu_c71f5307fb286b48.png 1024w"
+loading="lazy"
+alt="cockpit_change_nw"
+class="gallery-image"
+data-flex-grow="204"
+data-flex-basis="490px"
+&gt;&lt;/p&gt;
+&lt;p&gt;これにより、インターフェースのソースとIPが変更されていることが確認できます&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_change_nw2.png"
+width="3329"
+height="454"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_change_nw2_hu_96167cce5b7552a1.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_change_nw2_hu_76d922a1dec7e4da.png 1024w"
+loading="lazy"
+alt="cockpit_change_nw2"
+class="gallery-image"
+data-flex-grow="733"
+data-flex-basis="1759px"
+&gt;&lt;/p&gt;
+&lt;p&gt;以上がcockpitからのVM作成の手順になります。virshを用いた方法と比較してかなり簡単に作成できることがわかります&lt;/p&gt;
+&lt;h2 id="vmの構築番外編"&gt;VMの構築②(番外編)
+&lt;/h2&gt;&lt;p&gt;前の章では、cockpitで一から仮想マシンを作成しましたが、既存のVMをコピーすることで更に簡単にVMを作成することができます&lt;/p&gt;
+&lt;p&gt;以下手順でVMのコピーを実施します&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;コピー元の仮想マシンをシャットダウンする&lt;/li&gt;
+&lt;li&gt;コピー元仮想マシンの右側三点リーダーからクローンを選択&lt;/li&gt;
+&lt;li&gt;名前を入力してクローンをクリック&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_clone.png"
+width="3313"
+height="1127"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_clone_hu_3e7c1a1e759f86ed.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_clone_hu_2c19a37ed118a171.png 1024w"
+loading="lazy"
+alt="cockpit_clone"
+class="gallery-image"
+data-flex-grow="293"
+data-flex-basis="705px"
+&gt;&lt;/p&gt;
+&lt;p&gt;終わりです。コピー元VMからコピーして新しいVMが作成されました&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_clone_check.png"
+width="3313"
+height="1127"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_clone_check_hu_91aa3409b15b511a.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7vm%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_clone_check_hu_2721208c443bdc53.png 1024w"
+loading="lazy"
+alt="cockpit_clone_check"
+class="gallery-image"
+data-flex-grow="293"
+data-flex-basis="705px"
+&gt;&lt;/p&gt;
+&lt;p&gt;以上、cockpitを使って仮想マシンを作成する方法を紹介しました。&lt;br&gt;
+次回は仮想マシンがアタッチされる、仮想ネットワークについて書いていこうと思います&lt;/p&gt;</description></item><item><title>【KVMの仮想化入門③】cockpitでブラウザからVMを操作してみる</title><link>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</link><pubDate>Mon, 16 Dec 2024 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</guid><description>&lt;p&gt;前回はvirshを使って、CLIからVMを構築しました。今回はVMをブラウザから操作するためのcockpitをインストールして動かして見ようと思います&lt;/p&gt;
+&lt;h2 id="cockpitとは"&gt;cockpitとは:
+&lt;/h2&gt;&lt;p&gt;cockpitとは、下記特徴を持つソフトウェアです。今回は仮想化のために使用しますが、それはあくまでcockpitの機能の一部を利用する形となります&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Linuxシステムのサーバ管理用webサーバー&lt;/li&gt;
+&lt;li&gt;LinuxシステムのCPU、メモリ、ネットワーク、ストレージなどのシステムリソースの使用状況をリアルタイムで監視できる&lt;/li&gt;
+&lt;li&gt;仮想マシンの作成、起動、停止、スナップショットの作成等簡単な操作をGUIで行うことができる&lt;/li&gt;
+&lt;li&gt;小規模な環境やシンプルな仮想化運用に適している&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;その他のソフトウェアも気になっているので、後々記事にしていければと思っています&lt;/p&gt;
+&lt;p&gt;以下は、LinuxにCockpitをインストールして仮想マシンを確認する手順を紹介するブログのMarkdown形式のサンプルです。&lt;/p&gt;
+&lt;h2 id="cockpitのインストールと起動"&gt;cockpitのインストールと起動
+&lt;/h2&gt;&lt;p&gt;以下のコマンドを実行して、cockpitと仮想マシンの管理に必要なパッケージをインストールします。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt install cockpit cockpit-machines
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;インストールが完了したら、Cockpitサービスを開始します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl start cockpit
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="cockpit-webインターフェースにアクセス"&gt;cockpit Webインターフェースにアクセス
+&lt;/h2&gt;&lt;p&gt;cockpitの起動が完了したため、Webブラウザから9090ポートで管理画面にアクセスできます。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://&amp;lt;サーバーのIPアドレス&amp;gt;:9090
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以下のようなログインページが表示されるため、ubuntuのログインユーザーでログインします&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_login.png"
+width="3819"
+height="2008"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_login_hu_705692e03b346151.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_login_hu_2c58be4ea29fe51b.png 1024w"
+loading="lazy"
+alt="cockpit_login"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="456px"
+&gt;&lt;/p&gt;
+&lt;p&gt;ログインすると以下のような画面になります&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_main.png"
+width="3819"
+height="2008"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_main_hu_3559cb7aba2540a.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_main_hu_3798cb12b4f9347d.png 1024w"
+loading="lazy"
+alt="cockpit_main"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="456px"
+&gt;&lt;/p&gt;
+&lt;p&gt;そして、仮想マシンのタブを開くと既に作成しているubuntu001が確認でき、&lt;br&gt;
+このページからは仮想マシンに対して以下の操作が可能となっています&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VMのインポート/新規作成&lt;/li&gt;
+&lt;li&gt;VMの電源操作(起動、停止、再起動)&lt;/li&gt;
+&lt;li&gt;VMの移行&lt;/li&gt;
+&lt;li&gt;VMの削除&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms.png"
+width="3819"
+height="2008"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms_hu_dbe6b9f4a7cd9def.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vms_hu_eeae4b24e0531688.png 1024w"
+loading="lazy"
+alt="cockpit_vms"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="456px"
+&gt;&lt;/p&gt;
+&lt;p&gt;また、VM名をクリックすることでその仮想マシンの詳細を確認することができます&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vm.png"
+width="3819"
+height="2008"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vm_hu_7ef115b940ff9747.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vm_hu_79c059cef90490.png 1024w"
+loading="lazy"
+alt="cockpit_vm1"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="456px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vm2.png"
+width="3819"
+height="2008"
+srcset="http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vm2_hu_9fe8cf7d3a175b5e.png 480w, http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80cockpit%E3%81%A7%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%81%8B%E3%82%89vm%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/uploads/cockpit_vm2_hu_155e2c2c3faf26c8.png 1024w"
+loading="lazy"
+alt="cockpit_vm2"
+class="gallery-image"
+data-flex-grow="190"
+data-flex-basis="456px"
+&gt;&lt;/p&gt;
+&lt;p&gt;ここからVMのコンソールを操作することができるため、ここで作成したubuntu001のセットアップを行ないます&lt;br&gt;
+(この記事では本手順は省略します。わからない方は&lt;a class="link" href="https://gihyo.jp/admin/serial/01/ubuntu-recipe/0820" target="_blank" rel="noopener"
+&gt;こちら&lt;/a&gt;を参考にしていただけると良いかもしれません。)&lt;/p&gt;
+&lt;!-- ![cockpit_vm_cdrom1](uploads/cockpit_vm_cdrom1.png) --&gt;
+&lt;!-- ![cockpit_vm_cdrom2](uploads/cockpit_vm_cdrom2.png) --&gt;</description></item><item><title>【KVMの仮想化入門②】virshでVMをデプロイしてみる</title><link>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80virsh%E3%81%A7vm%E3%82%92%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</link><pubDate>Wed, 11 Dec 2024 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80virsh%E3%81%A7vm%E3%82%92%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B/</guid><description>&lt;p&gt;前回はKVMの仮想化基盤を用意するところまでをやってみました。今回は&lt;code&gt;virsh&lt;/code&gt;を用いてCLIから仮想マシンを構築するところまでをやってみます&lt;/p&gt;
+&lt;h2 id="virshとは"&gt;virshとは
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;KVMやQEMUを利用した仮想化基盤の管理をコマンドラインから行うためのツール&lt;/li&gt;
+&lt;li&gt;Libvirtという仮想化管理ツールをバックエンドに利用&lt;/li&gt;
+&lt;li&gt;仮想マシンの作成、削除、起動、停止、リソースの管理などをシンプルなコマンドで実行可能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="virshで利用できる参照コマンド"&gt;virshで利用できる参照コマンド
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;virsh&lt;/code&gt;には仮想化リソースを参照するための多くのコマンドが用意されています。&lt;br&gt;
+まずはよく利用しそうなコマンドを使ってみようと思います&lt;/p&gt;
+&lt;h3 id="仮想マシンの参照コマンド"&gt;仮想マシンの参照コマンド
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;virsh list --all&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;稼働中、停止中を問わずすべてのVMを表示します(今回はまだVMを作成できていないので表示なし)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh list --all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Id Name State
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--------------------
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;仮にVMが存在した場合、以下のような表示になります&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ virsh list --all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Id Name State
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 12 ubuntu001 running
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - ubuntu002 shut off
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;virsh dominfo &amp;lt;VM名&amp;gt;&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;指定したVMの詳細情報を表示(別途用意した環境で確認)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ virsh dominfo ubuntu001
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Id: 12
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Name: ubuntu001
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;UUID: bdce429c-1284-463b-8af4-f538374a3b2d
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;OS Type: hvm
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;State: running
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;CPU(s): 2
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;CPU time: 10368.9s
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Max memory: 3145728 KiB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Used memory: 3145728 KiB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Persistent: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Autostart: disable
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Managed save: no
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Security model: none
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Security DOI: 0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Messages: tainted: running with undesirable elevated privileges
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="仮想ネットワークの参照コマンド"&gt;仮想ネットワークの参照コマンド
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;virsh net-list&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;現在有効な仮想ネットワークの一覧を表示します。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;default&lt;/code&gt; という名前の仮想ネットワークがすでに作成されていることがわかります&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh net-list --all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Name State Autostart Persistent
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; default active yes yes
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;virsh net-dumpxml &amp;lt;ネットワーク名&amp;gt;&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;指定したネットワークの設定を表示します。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh net-info default
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Name: default
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;UUID: 61c20183-757b-402f-a92e-677072b910d0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Active: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Persistent: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Autostart: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bridge: virbr0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;この仮想ネットワークについては、今後もう少し詳細を書きたいと思っています&lt;/p&gt;
+&lt;h3 id="仮想ストレージの参照コマンド"&gt;仮想ストレージの参照コマンド
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;virsh pool-list&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;現在利用可能なストレージプールの一覧を表示します。(今回はまだ作成できていないので表示なし)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh pool-list --all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Name State Autostart
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;---------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;すでに作成されていた場合、以下のような表示になります&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ virsh pool-list
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Name State Autostart
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; default active yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ubuntu active yes
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;virsh pool-info &amp;lt;プール名&amp;gt;&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;指定したストレージプールの詳細情報を表示します。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ virsh pool-info default
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Name: default
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;UUID: fa63badf-324b-4fa9-992c-81581e9c307f
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;State: running
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Persistent: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Autostart: yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Capacity: 456.35 GiB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Allocation: 72.34 GiB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Available: 384.00 GiB
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="virsh仮想マシンを構築する"&gt;virsh仮想マシンを構築する
+&lt;/h2&gt;&lt;p&gt;前置きが長くなりましたが、いよいよ仮想マシンの構築に入ります。&lt;/p&gt;
+&lt;h3 id="isoの準備"&gt;isoの準備
+&lt;/h3&gt;&lt;p&gt;今回は、ubuntuのVMを作成しようと思うので、wgetでubuntuのisoをダウンロードしておきます&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir /iso
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo wget -P /iso https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="ディスクイメージの準備"&gt;ディスクイメージの準備
+&lt;/h3&gt;&lt;p&gt;仮想マシン用のディスクイメージを作成します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo qemu-img create -f qcow2 /var/lib/libvirt/images/ubuntu001.qcow2 20G
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="仮想マシンのxmlファイルを作成"&gt;仮想マシンのXMLファイルを作成
+&lt;/h3&gt;&lt;p&gt;libvirtでは、XMLを用いてVMの構成管理が行われます&lt;br&gt;
+そのため、以下の仮想マシンの構成を定義するXMLファイルを用意します&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vi ubuntu001.xml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;ファイルには以下内容を記載します&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;domain&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;kvm&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;name&amp;gt;&lt;/span&gt;ubuntu001&lt;span class="nt"&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;memory&lt;/span&gt; &lt;span class="na"&gt;unit=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;MiB&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;4096&lt;span class="nt"&gt;&amp;lt;/memory&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;vcpu&lt;/span&gt; &lt;span class="na"&gt;placement=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;static&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;2&lt;span class="nt"&gt;&amp;lt;/vcpu&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;os&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;type&lt;/span&gt; &lt;span class="na"&gt;arch=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;x86_64&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;machine=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;pc-i440fx-6.2&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;hvm&lt;span class="nt"&gt;&amp;lt;/type&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;boot&lt;/span&gt; &lt;span class="na"&gt;dev=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;cdrom&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/os&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;devices&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;disk&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;file&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;device=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;disk&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;driver&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;qemu&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;qcow2&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;source&lt;/span&gt; &lt;span class="na"&gt;file=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/var/lib/libvirt/images/ubuntu001.qcow2&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;target&lt;/span&gt; &lt;span class="na"&gt;dev=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;vda&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;bus=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;virtio&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/disk&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;disk&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;file&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;device=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;cdrom&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;driver&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;qemu&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;raw&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;source&lt;/span&gt; &lt;span class="na"&gt;file=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/iso/ubuntu-24.04.1-live-server-amd64.iso&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;target&lt;/span&gt; &lt;span class="na"&gt;dev=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sda&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;bus=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sata&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/disk&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;interface&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;network&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;source&lt;/span&gt; &lt;span class="na"&gt;network=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;default&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/interface&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;graphics&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;vnc&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;port=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;-1&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;autoport=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;yes&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/devices&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/domain&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;XMLに記載している内容について、細かい内容は省略しますが下記設定を盛り込んでいます&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基本情報
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;name&amp;gt;ubuntu001&amp;lt;/name&amp;gt;&lt;/code&gt;: vm名をubuntu001とする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;memory unit='MiB'&amp;gt;4096&amp;lt;/memory&amp;gt;&lt;/code&gt;: 仮想マシンに割り当てるメモリ量を4096MB=2GBとする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;vcpu placement='static'&amp;gt;2&amp;lt;/vcpu&amp;gt;&lt;/code&gt;: 割り当てるvCPUの数を2にする&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;OSの設定 (&lt;code&gt;&amp;lt;os&amp;gt;&lt;/code&gt;)
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;boot dev='cdrom'/&amp;gt;&lt;/code&gt;: 仮想マシン起動時にCD-ROMを最初のブートデバイスとして使用するように設定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ストレージの設定 (&lt;code&gt;&amp;lt;disk&amp;gt;&lt;/code&gt;)
+&lt;ul&gt;
+&lt;li&gt;仮想ディスク
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;source file='/var/lib/libvirt/images/ubuntu001.qcow2'/&amp;gt;&lt;/code&gt;: 作成した仮想ディスクのパスを指定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ISOイメージ（&lt;code&gt;&amp;lt;disk&amp;gt;&lt;/code&gt;）
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;disk type='file' device='cdrom'&amp;gt;&lt;/code&gt;: ISOイメージを光学ドライブに割り当てる設定&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;source file='/iso/ubuntu-24.04.1-live-server-amd64.iso'/&amp;gt;&lt;/code&gt;: ダウンロードしたISOイメージをソースに設定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ネットワーク設定 (&lt;code&gt;&amp;lt;interface&amp;gt;&lt;/code&gt;)
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;interface type='network'&amp;gt;&lt;/code&gt;: 仮想マシンのネットワークインターフェイスを設定 (NATを用いた接続)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;source network='default'/&amp;gt;&lt;/code&gt;: 事前定義された&lt;code&gt;default&lt;/code&gt;ネットワークを使用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;詳細は下記サイトにまとまっています&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.redhat.com/ja/documentation/red_hat_enterprise_linux/8/html/configuring_and_managing_virtualization/sample-virtual-machine-xml-configuration_viewing-information-about-virtual-machines#sample-virtual-machine-xml-configuration_viewing-information-about-virtual-machines" target="_blank" rel="noopener"
+&gt;7.3. 仮想マシンの XML 設定例 | Red Hat Product Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="仮想マシンの定義を読み込む"&gt;仮想マシンの定義を読み込む
+&lt;/h3&gt;&lt;p&gt;用意したXMLファイルを読み込み、仮想マシンを定義します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;virsh define ubuntu001.xml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;ちなみに、この時点で仮想マシンが作成された状態となり、&lt;code&gt;virsh list --all&lt;/code&gt;でその状態が確認できます。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh list --all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Id Name State
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;----------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - ubuntu001 shut off
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="仮想マシンを起動"&gt;仮想マシンを起動
+&lt;/h3&gt;&lt;p&gt;定義した仮想マシンを起動します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;virsh start ubuntu001
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;起動後、以下のコマンドで仮想マシンの状態を確認します。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ virsh list --all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Id Name State
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;----------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="m"&gt;3&lt;/span&gt; myvm running
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以上で仮想マシンを構築するところまでが完了しました。&lt;br&gt;
+次回はcockpitを使ってwebのGUIからVMを操作するところまでを実施します&lt;/p&gt;</description></item><item><title>【KVMの仮想化入門① 】LinuxにKVMをインストールする</title><link>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80-linux%E3%81%ABkvm%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B/</link><pubDate>Tue, 10 Dec 2024 00:00:00 +0000</pubDate><guid>http://192.168.122.81/p/kvm%E3%81%AE%E4%BB%AE%E6%83%B3%E5%8C%96%E5%85%A5%E9%96%80-linux%E3%81%ABkvm%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B/</guid><description>&lt;p&gt;KVM（Kernel-based Virtual Machine）について、少し勉強した上でLinuxのマシンにKVMの仮想化基盤を構築するところまでをやってみます&lt;/p&gt;
+&lt;h2 id="仮想化の概要"&gt;仮想化の概要
+&lt;/h2&gt;&lt;p&gt;KVMについてお話する前に、前提として仮想化と、そのプラットフォームについて書いてみます。&lt;br&gt;
+仮想化とは、1つの物理コンピュータ上で複数の仮想マシン（Virtual Machine, VM）を実行する技術です。仮想化により、物理リソースの効率的な活用、アプリケーションの分離、テスト環境の作成が容易になります。&lt;/p&gt;
+&lt;h2 id="kvmについて"&gt;KVMについて
+&lt;/h2&gt;&lt;p&gt;仮想化技術に使用されるハイパーバイザには様々なものがありますが、今回利用するKVMについてざっくりと特徴を上げると以下になります&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;オープンソースとして無料で提供されている&lt;/li&gt;
+&lt;li&gt;Linuxカーネルに統合された仮想化機能&lt;/li&gt;
+&lt;li&gt;qemu, libvirtと組み合わせて利用される&lt;/li&gt;
+&lt;li&gt;virsh, virt-manager, cockpit, OpenStack, oVirtなど様々な管理ツールが存在する&lt;/li&gt;
+&lt;li&gt;AWS, GCP等のメガクラウドでも採用されている技術である&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;※ qemuについて: &lt;a class="link" href="https://gihyo.jp/dev/serial/01/vm_work/0002" target="_blank" rel="noopener"
+&gt;第2回　Linux KVMで知る仮想マシンの概要 | gihyo.jp&lt;/a&gt;&lt;br&gt;
+※ KVM管理ツールについて: &lt;a class="link" href="https://www.designet.co.jp/faq/term/?id=S1ZN" target="_blank" rel="noopener"
+&gt;KVMとは | OSSのデージーネット&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="kvmを用いた仮想化環境の構築"&gt;KVMを用いた仮想化環境の構築
+&lt;/h2&gt;&lt;p&gt;以下コマンドで、必要なパッケージをインストールしていきます&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 必要なパッケージのインストール&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt update
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt install -y qemu-kvm libvirt-daemon libvirt-clients bridge-utils
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 再起動&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;すごく簡単ですが、インストールしているパッケージに関しての説明は以下です&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;qemu-kvm
+&lt;ul&gt;
+&lt;li&gt;KVM（仮想化）の中核となるパッケージ。必須。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;libvirt-daemon
+&lt;ul&gt;
+&lt;li&gt;仮想マシンを管理するためのバックエンドサービス。必須。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;libvirt-clients
+&lt;ul&gt;
+&lt;li&gt;仮想マシン管理用のCLIツール群。CLIから仮想マシンを操作する際に必要。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;bridge-utils
+&lt;ul&gt;
+&lt;li&gt;ブリッジネットワークの構築に使うツール群。仮想マシンをホストのブリッジネットワークに接続したい際に必要。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="インストールの確認"&gt;インストールの確認
+&lt;/h2&gt;&lt;p&gt;以下のコマンドでインストールが成功しているか確認します。&lt;/p&gt;
+&lt;h3 id="kvmの状態確認"&gt;KVMの状態確認
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ sudo kvm-ok
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;INFO: /dev/kvm exists
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;KVM acceleration can be used
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="libvirtサービスの状態確認"&gt;libvirtサービスの状態確認
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ubuntu@kvm001:~$ sudo systemctl status libvirtd
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;○ libvirtd.service - libvirt legacy monolithic daemon
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Loaded: loaded &lt;span class="o"&gt;(&lt;/span&gt;/usr/lib/systemd/system/libvirtd.service&lt;span class="p"&gt;;&lt;/span&gt; enabled&lt;span class="p"&gt;;&lt;/span&gt; preset: enabled&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Active: inactive &lt;span class="o"&gt;(&lt;/span&gt;dead&lt;span class="o"&gt;)&lt;/span&gt; since Fri 2024-12-13 03:18:37 UTC&lt;span class="p"&gt;;&lt;/span&gt; 9s ago
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# ~~以下省略~~&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以上で、KVMとその関連ツールのインストールは完了です。&lt;/p&gt;
+&lt;p&gt;次回はこのKVM環境でvirshを使って仮想マシンを構築してみます&lt;/p&gt;</description></item></channel></rss>
